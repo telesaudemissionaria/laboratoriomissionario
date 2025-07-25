@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório Missionário</title>
+    <meta name="theme-color" content="#ffffff"/>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            font-size: 16px;
+        }
+        .loader {
+            border-top-color: #1d4ed8;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .touch-button {
+            min-height: 48px;
+            min-width: 44px;
+            padding: 0.75rem 1.5rem;
+        }
+        .required-label::after {
+            content: ' *';
+            color: #ef4444;
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        #pdf-render-area {
+            display: none;
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            background: white;
+            padding: 2rem;
+            width: 800px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Modal Genérico -->
+    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" style="display: none;">
+        <div id="modal-content" class="bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"></div>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header id="main-header" class="text-center mb-8 no-print">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Laboratório Missionário ⚕️</h1>
+            <p class="text-md text-gray-600 mt-2">Ferramenta de apoio para triagem e análise de exames em campo.</p>
+        </header>
+
+        <main>
+            <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 mb-8 no-print">
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <div class="flex-1 w-full">
+                        <label for="patient-profile-select" class="block text-sm font-medium text-gray-700">Paciente Ativo</label>
+                        <select id="patient-profile-select" class="mt-1 w-full rounded-md border-gray-300 shadow-sm p-2 text-base"></select>
+                    </div>
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <button id="new-profile-btn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg touch-button text-sm">Novo Perfil</button>
+                        <button id="history-btn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg touch-button text-sm">Histórico</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="input-section" class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <form id="lab-form">
+                    <h2 class="text-2xl font-semibold mb-6 text-gray-900 border-b pb-3">Dados do Paciente e Exames</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div>
+                            <label for="patient-name" class="block text-sm font-medium required-label">Nome</label>
+                            <input type="text" id="patient-name" name="patient_name" class="mt-1 w-full rounded-md p-2 text-base border-gray-300" required>
+                        </div>
+                        <div>
+                            <label for="patient-age" class="block text-sm font-medium required-label">Idade (anos)</label>
+                            <input type="number" id="patient-age" name="patient_age" class="mt-1 w-full rounded-md p-2 text-base border-gray-300" required>
+                        </div>
+                        <div>
+                            <label for="patient-gender" class="block text-sm font-medium required-label">Sexo</label>
+                            <select id="patient-gender" name="patient_gender" class="mt-1 w-full rounded-md p-2 text-base border-gray-300" required>
+                                <option value="">Selecione...</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Feminino">Feminino</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Colunas de Exames -->
+                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
+                            <h3 class="text-lg font-semibold">Exame de Sangue (Série Vermelha)</h3>
+                            <div><label for="hemoglobina">Hemoglobina (g/dL)</label><input type="text" id="hemoglobina" name="hemoglobina" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="hematocrito">Hematócrito (%)</label><input type="text" id="hematocrito" name="hematocrito" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="hematies">G. Vermelhos (x10⁶/µL)</label><input type="text" id="hematies" name="hematies" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="vcm">VCM (fL)</label><input type="text" id="vcm" name="vcm" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="hcm">HCM (pg)</label><input type="text" id="hcm" name="hcm" class="mt-1 w-full rounded-md p-2"></div>
+                        </div>
+                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
+                            <h3 class="text-lg font-semibold">Exame de Sangue (Série Branca)</h3>
+                            <div><label for="leucocitos">Leucócitos (/mm³)</label><input type="text" id="leucocitos" name="leucocitos" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="neutrofilos">Neutrófilos (%)</label><input type="text" id="neutrofilos" name="neutrofilos" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="linfocitos">Linfócitos (%)</label><input type="text" id="linfocitos" name="linfocitos" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="monocitos">Monócitos (%)</label><input type="text" id="monocitos" name="monocitos" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="eosinofilos">Eosinófilos (%)</label><input type="text" id="eosinofilos" name="eosinofilos" class="mt-1 w-full rounded-md p-2"></div>
+                             <div><label for="cayados">Bastonetes (%)</label><input type="text" id="cayados" name="cayados" class="mt-1 w-full rounded-md p-2"></div>
+                        </div>
+                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
+                            <h3 class="text-lg font-semibold">Bioquímica e Coagulação</h3>
+                            <div><label for="glicose">Glicemia (mg/dL)</label><input type="text" id="glicose" name="glicose" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="creatinina">Creatinina (mg/dL)</label><input type="text" id="creatinina" name="creatinina" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="ast_tgo">AST/TGO (U/L)</label><input type="text" id="ast_tgo" name="ast_tgo" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="alt_tgp">ALT/TGP (U/L)</label><input type="text" id="alt_tgp" name="alt_tgp" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="plaquetas">Plaquetas (/mm³)</label><input type="text" id="plaquetas" name="plaquetas" class="mt-1 w-full rounded-md p-2"></div>
+                        </div>
+                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
+                            <h3 class="text-lg font-semibold">Testes para Doenças Regionais</h3>
+                            <h4 class="font-semibold text-sm text-gray-600">Chagas</h4>
+                            <div><label for="chagas_micrometodo">Micrométodo (Recém-nascido)</label><input type="text" id="chagas_micrometodo" name="chagas_micrometodo" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="chagas_serologia_materna">Sorologia (Mãe)</label><input type="text" id="chagas_serologia_materna" name="chagas_serologia_materna" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="chagas_serologia_nino">Sorologia (Criança >6m)</label><input type="text" id="chagas_serologia_nino" name="chagas_serologia_nino" class="mt-1 w-full rounded-md p-2"></div>
+                            <h4 class="font-semibold text-sm text-gray-600 pt-2">Dengue</h4>
+                            <div><label for="dengue_ns1">Antígeno NS1 / PCR</label><input type="text" id="dengue_ns1" name="dengue_ns1" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="dengue_serologia_igm">Sorologia IgM</label><input type="text" id="dengue_serologia_igm" name="dengue_serologia_igm" class="mt-1 w-full rounded-md p-2"></div>
+                        </div>
+                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
+                            <h3 class="text-lg font-semibold">Gasometria</h3>
+                            <div><label for="gasometria_ph">pH</label><input type="text" id="gasometria_ph" name="gasometria_ph" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="gasometria_pco2">pCO₂ (mmHg)</label><input type="text" id="gasometria_pco2" name="gasometria_pco2" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="gasometria_hco3">HCO₃⁻ (mmol/L)</label><input type="text" id="gasometria_hco3" name="gasometria_hco3" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="gasometria_po2">pO₂ (mmHg)</label><input type="text" id="gasometria_po2" name="gasometria_po2" class="mt-1 w-full rounded-md p-2"></div>
+                             <h3 class="text-lg font-semibold pt-4">Função do Fígado</h3>
+                            <div><label for="bilirrubina_direta">Bilirrubina Direta (mg/dL)</label><input type="text" id="bilirrubina_direta" name="bilirrubina_direta" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="bilirrubina_indireta">Bilirrubina Indireta (mg/dL)</label><input type="text" id="bilirrubina_indireta" name="bilirrubina_indireta" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="bilirrubina_total">Bilirrubina Total (mg/dL)</label><input type="text" id="bilirrubina_total" name="bilirrubina_total" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="albumina">Albumina (g/dL)</label><input type="text" id="albumina" name="albumina" class="mt-1 w-full rounded-md p-2"></div>
+                        </div>
+                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
+                            <h3 class="text-lg font-semibold">Eletrólitos</h3>
+                            <div><label for="eletrolitos_na">Sódio (Na+)</label><input type="text" id="eletrolitos_na" name="eletrolitos_na" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="eletrolitos_k">Potássio (K+)</label><input type="text" id="eletrolitos_k" name="eletrolitos_k" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="eletrolitos_cl">Cloro (Cl-)</label><input type="text" id="eletrolitos_cl" name="eletrolitos_cl" class="mt-1 w-full rounded-md p-2"></div>
+                            <div><label for="eletrolitos_ca">Cálcio (Ca²+)</label><input type="text" id="eletrolitos_ca" name="eletrolitos_ca" class="mt-1 w-full rounded-md p-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <label for="outros_dados" class="block text-sm font-medium required-label">Sinais, Sintomas e História do Paciente</label>
+                        <textarea id="outros_dados" name="outros_dados" rows="4" class="mt-1 block w-full rounded-md p-2 border-gray-300" placeholder="Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes..." required></textarea>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t text-center">
+                        <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                            <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg touch-button">Analisar com IA (Gemini)</button>
+                            <button type="button" id="clear-form-btn" class="w-full md:w-auto bg-white hover:bg-gray-100 text-gray-700 font-bold rounded-lg shadow-md border touch-button">Limpar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="loading-section" class="text-center my-10" style="display: none;">
+                <div class="loader ease-linear rounded-full border-8 border-t-8 h-24 w-24 mx-auto"></div>
+                <p class="mt-4 text-lg">Analisando dados... Por favor, aguarde.</p>
+            </div>
+            
+            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg my-6" role="alert">
+                <strong class="font-bold">Ocorreu um erro!</strong>
+                <span id="error-content" class="block sm:inline"></span>
+            </div>
+
+            <div id="report-output" class="mt-10">
+                <!-- Área visível para o relatório -->
+                <div id="report-display-area"></div>
+            </div>
+            <!-- Área oculta, formatada para renderização do PDF -->
+            <div id="pdf-render-area"></div>
+        </main>
+
+        <footer class="text-center mt-12 text-sm text-gray-500 no-print">
+            <p>&copy; 2024 Laboratório Missionário.</p>
+            <p class="mt-4 text-xs text-red-700"><strong>AVISO LEGAL:</strong> Esta ferramenta é um auxílio e não substitui uma consulta médica qualificada.</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        const { jsPDF } = window.jspdf;
+
+        // --- DATABASE HELPERS (localStorage) ---
+        const DB = {
+            get: (key) => JSON.parse(localStorage.getItem(key) || '[]'),
+            set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
+        };
+
+        // --- STATE & DOM ELEMENTS ---
+        let activeProfileId = null;
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        const labForm = document.getElementById('lab-form');
+        const clearBtn = document.getElementById('clear-form-btn');
+        const loadingSection = document.getElementById('loading-section');
+        const errorMessage = document.getElementById('error-message');
+        const reportOutput = document.getElementById('report-output');
+        const reportDisplayArea = document.getElementById('report-display-area');
+        const newProfileBtn = document.getElementById('new-profile-btn');
+        const historyBtn = document.getElementById('history-btn');
+        const profileSelect = document.getElementById('patient-profile-select');
+
+        // --- UTILITY FUNCTIONS ---
+        const showSection = (el, show) => el.style.display = show ? 'block' : 'none';
+        const showError = (msg) => {
+            const errorContent = document.getElementById('error-content');
+            errorContent.textContent = msg;
+            showSection(errorMessage, true);
+        };
+        const showModal = (content) => {
+            modalContent.innerHTML = content;
+            showSection(modal, true);
+        };
+        const hideModal = () => showSection(modal, false);
+        
+        // --- PROFILE MANAGEMENT ---
+        function loadProfiles() {
+            const profiles = DB.get('profiles');
+            profileSelect.innerHTML = '<option value="">Selecione um perfil...</option>';
+            profiles.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.name} (${p.age} anos, ${p.isPediatric ? 'Criança' : 'Adulto'})`;
+                profileSelect.appendChild(option);
+            });
+            if (activeProfileId) profileSelect.value = activeProfileId;
+        }
+
+        function selectProfile(id) {
+            const profiles = DB.get('profiles');
+            const profile = profiles.find(p => p.id === id);
+            if (profile) {
+                activeProfileId = id;
+                document.getElementById('patient-name').value = profile.name;
+                document.getElementById('patient-age').value = profile.age;
+                document.getElementById('patient-gender').value = profile.gender;
+                document.body.classList.toggle('pediatric-mode', profile.isPediatric);
+            } else {
+                activeProfileId = null;
+                labForm.reset();
+            }
+        }
+
+        function showNewProfileForm() {
+            showModal(`
+                <h2 class="text-2xl font-bold mb-4">Novo Perfil de Paciente</h2>
+                <form id="new-profile-form" class="space-y-4">
+                    <input type="text" id="new-name" placeholder="Nome Completo" class="w-full rounded-md p-2 border" required>
+                    <input type="number" id="new-age" placeholder="Idade (anos)" class="w-full rounded-md p-2 border" required>
+                    <select id="new-gender" class="w-full rounded-md p-2 border" required>
+                        <option value="">Selecione o Sexo...</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="new-is-pediatric" class="h-4 w-4 rounded">
+                        <label for="new-is-pediatric" class="ml-2">É um paciente pediátrico?</label>
+                    </div>
+                    <div class="flex justify-end gap-4 pt-4">
+                        <button type="button" id="cancel-profile" class="bg-gray-300 hover:bg-gray-400 font-bold rounded-lg touch-button">Cancelar</button>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg touch-button">Salvar</button>
+                    </div>
+                </form>
+            `);
+            document.getElementById('new-profile-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newProfile = {
+                    id: `profile_${Date.now()}`,
+                    name: document.getElementById('new-name').value,
+                    age: document.getElementById('new-age').value,
+                    gender: document.getElementById('new-gender').value,
+                    isPediatric: document.getElementById('new-is-pediatric').checked,
+                };
+                const profiles = DB.get('profiles');
+                profiles.push(newProfile);
+                DB.set('profiles', profiles);
+                activeProfileId = newProfile.id;
+                loadProfiles();
+                selectProfile(activeProfileId);
+                hideModal();
+            });
+            document.getElementById('cancel-profile').addEventListener('click', hideModal);
+        }
+
+        // --- HISTORY MANAGEMENT ---
+        function saveCaseToHistory(reportData) {
+            const history = DB.get('history');
+            history.unshift(reportData);
+            if (history.length > 50) history.pop();
+            DB.set('history', history);
+        }
+
+        function showHistory() {
+            const history = DB.get('history');
+            let content = '<h2 class="text-2xl font-bold mb-4">Histórico de Atendimentos</h2>';
+            if (history.length === 0) {
+                content += '<p>Nenhum atendimento salvo.</p>';
+            } else {
+                content += '<div class="space-y-4">';
+                history.forEach((item, index) => {
+                    content += `
+                        <div class="border p-4 rounded-lg">
+                            <p><strong>Paciente:</strong> ${item.patient.name}</p>
+                            <p><strong>Data:</strong> ${new Date(item.timestamp).toLocaleString('pt-BR')}</p>
+                            <button class="view-history-item text-blue-600 underline" data-index="${index}">Ver Relatório</button>
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            }
+            content += '<div class="flex justify-end pt-4"><button id="close-history" class="bg-gray-300 hover:bg-gray-400 font-bold rounded-lg touch-button">Fechar</button></div>';
+            showModal(content);
+            document.getElementById('close-history').addEventListener('click', hideModal);
+            document.querySelectorAll('.view-history-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const item = history[e.target.dataset.index];
+                    displayReport(item.reports, item.patient);
+                    hideModal();
+                });
+            });
+        }
+        
+        // --- REPORTING & SHARING ---
+        function displayReport(reports, patient) {
+            let html = '<div class="bg-white p-6 rounded-lg shadow-md border">';
+            if (reports.ia) {
+                html += `
+                    <div>
+                        <h2 class="text-2xl font-bold mb-4">Orientações da Análise (IA)</h2>
+                        <div class="prose max-w-none">${reports.ia.replace(/\n/g, '<br>')}</div>
+                    </div>`;
+            }
+            html += `
+                <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center gap-4 no-print">
+                    <button type="button" id="pdf-report-btn" class="w-full md:w-auto bg-red-600 text-white font-bold rounded-lg touch-button">Gerar PDF</button>
+                    <button type="button" id="whatsapp-report-btn" class="w-full md:w-auto bg-green-600 text-white font-bold rounded-lg touch-button">Enviar Relatório</button>
+                </div>`;
+            html += '</div>';
+            reportDisplayArea.innerHTML = html;
+            showSection(reportOutput, true);
+            reportOutput.scrollIntoView({ behavior: 'smooth' });
+            
+            document.getElementById('pdf-report-btn').addEventListener('click', () => generatePdf(patient.name, reports));
+            document.getElementById('whatsapp-report-btn').addEventListener('click', () => {
+                let reportContent = `*Relatório do Laboratório Missionário para ${patient.name}*\n\n`;
+                
+                const labData = {};
+                new FormData(labForm).forEach((value, key) => {
+                    if (value.trim()) labData[key.replace(/_/g, ' ')] = value;
+                });
+                reportContent += "*DADOS INFORMADOS:*\n"
+                reportContent += Object.entries(labData).map(([key, value]) => `*- ${key}:* ${value}`).join('\n');
+                reportContent += "\n\n---\n\n";
+
+                if (reports.ia) {
+                    reportContent += `*ANÁLISE DA IA (Gemini):*\n${reports.ia}\n\n`;
+                }
+                const message = encodeURIComponent(reportContent);
+                window.open(`https://wa.me/?text=${message}`, '_blank');
+            });
+        }
+
+        async function generatePdf(patientName, reports) {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
+
+            let y = 40;
+            const margin = 40;
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const usableWidth = pageWidth - margin * 2;
+
+            pdf.setFontSize(18).text(`Relatório para ${patientName}`, margin, y);
+            y += 30;
+
+            if (reports.ia) {
+                pdf.setFontSize(14).text('Orientações da Análise (IA)', margin, y);
+                y += 20;
+                const iaText = pdf.splitTextToSize(reports.ia, usableWidth);
+                pdf.setFontSize(10).text(iaText, margin, y);
+            }
+            
+            pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`);
+        }
+
+        async function generateGeminiReport() {
+            showSection(errorMessage, false);
+            showSection(reportOutput, false);
+            showSection(loadingSection, true);
+
+            const profiles = DB.get('profiles');
+            const currentProfile = profiles.find(p => p.id === activeProfileId);
+            const isPediatric = currentProfile ? currentProfile.isPediatric : false;
+
+            const labData = {};
+            new FormData(labForm).forEach((value, key) => {
+                if (value.trim()) {
+                    const cleanKey = key.replace(/_/g, ' ');
+                    labData[cleanKey] = value;
+                }
+            });
+
+            const patientType = isPediatric ? 'criança' : 'adulto';
+            const promptText = `
+                Você é um profissional de saúde experiente em triagem clínica. O paciente é um(a) ${patientType} de ${labData['patient age']} anos, sexo ${labData['patient gender']}. Analise os dados abaixo e responda:
+
+                - Explique os resultados dos exames em linguagem simples, clara e acolhedora, adequada para missionários não médicos.
+                - Se for uma criança, adicione recomendações específicas pediátricas adaptadas para idade.
+                - Destaque sinais de alerta prioritários.
+                - Sugira o próximo passo prático e seguro no campo.
+
+                ## Dados:
+                ${Object.entries(labData).map(([k,v]) => `- ${k}: ${v}`).join('\n')}
+            `;
+
+            try {
+                const apiKey = "AIzaSyBLKj7L2c4BEZwnSeD2s5PLDhrkkyiqr4A";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(errorBody.error?.message || `Erro na API: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                const reportText = result.candidates[0].content.parts[0].text;
+                
+                const patientData = { name: labData['patient name'], age: labData['patient age'] };
+                const caseData = {
+                    timestamp: Date.now(),
+                    patient: patientData,
+                    reports: { ia: reportText }
+                };
+                saveCaseToHistory(caseData);
+                displayReport(caseData.reports, patientData);
+
+            } catch (error) {
+                showError(`Falha ao gerar relatório com a IA: ${error.message}`);
+            } finally {
+                showSection(loadingSection, false);
+            }
+        }
+
+        // --- INITIAL SETUP ---
+        labForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            generateGeminiReport();
+        });
+        newProfileBtn.addEventListener('click', showNewProfileForm);
+        historyBtn.addEventListener('click', showHistory);
+        profileSelect.addEventListener('change', (e) => selectProfile(e.target.value));
+        clearBtn.addEventListener('click', () => { labForm.reset(); activeProfileId = null; profileSelect.value = ""; });
+        modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+        
+        loadProfiles();
+    </script>
+</body>
+</html>
