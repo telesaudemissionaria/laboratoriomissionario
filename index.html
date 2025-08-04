@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratório Missionário</title>
+    <title data-key="title">Laboratório Missionário</title>
     <meta name="theme-color" content="#1d4ed8"/>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,451 +14,752 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f9fafb;
-            font-size: 16px;
         }
         .loader {
             border-top-color: #1d4ed8;
-            -webkit-animation: spin 1s linear infinite;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .touch-button {
-            min-height: 48px;
-            min-width: 44px;
-            padding: 0.75rem 1.5rem;
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .required-label::after {
-            content: ' *';
-            color: #ef4444;
-        }
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.75);
-        }
-        #pdf-render-area {
-            display: none;
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            background: white;
-            padding: 2rem;
-            width: 800px;
-        }
+        .progress-bar-fill { transition: width 0.3s ease-in-out; }
+        .required-label::after { content: ' *'; color: #ef4444; }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.75); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- Modal Genérico -->
-    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" style="display: none;">
-        <div id="modal-content" class="bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"></div>
+    <!-- Modal Genérico para Ajuda e Termos Legais -->
+    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div id="modal-content"></div>
+        </div>
     </div>
 
-    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
-        <header id="main-header" class="text-center mb-8 no-print">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Laboratório Missionário ⚕️</h1>
-            <p class="text-md text-gray-600 mt-2">Ferramenta de apoio para triagem e análise de exames em campo.</p>
+    <!-- Botão de Ajuda Fixo -->
+    <button id="help-btn" class="fixed bottom-4 right-4 bg-yellow-500 text-white p-4 rounded-full shadow-lg z-40 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4 0 1.105-.448 2.105-1.172 2.828l-1.036 1.036c-.3.3-.608.668-.928 1.036-1.036 1.22-2.33 2.344-2.33 4.5V19m0-2.5h.01"></path></svg>
+    </button>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <div class="flex justify-center items-center mb-4 gap-4">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900" data-key="header-title">Laboratório Missionário ⚕️</h1>
+                <div class="lang-switcher flex gap-2">
+                    <button data-lang="pt-BR" title="Português (Brasil)"><img src="https://flagcdn.com/br.svg" alt="Bandeira do Brasil" class="w-8 h-auto"></button>
+                    <button data-lang="es" title="Español"><img src="https://flagcdn.com/es.svg" alt="Bandeira da Espanha" class="w-8 h-auto"></button>
+                    <button data-lang="en" title="English"><img src="https://flagcdn.com/us.svg" alt="Bandeira dos EUA" class="w-8 h-auto"></button>
+                </div>
+            </div>
+            <p class="text-md text-gray-600 mt-2" data-key="header-subtitle">Ferramenta de apoio para triagem e análise de exames.</p>
         </header>
 
         <main>
-            <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 mb-8 no-print">
-                <div class="flex flex-col md:flex-row gap-4 items-center">
-                    <div class="flex-1 w-full">
-                        <label for="patient-profile-select" class="block text-sm font-medium text-gray-700">Paciente Ativo</label>
-                        <select id="patient-profile-select" class="mt-1 w-full rounded-md border-gray-300 shadow-sm p-2 text-base"></select>
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <!-- Barra de Progresso -->
+                <div id="progress-container" class="mb-8">
+                    <h3 class="text-lg font-semibold text-center mb-2" data-key="progress-title">Progresso</h3>
+                    <div class="bg-gray-200 rounded-full h-4">
+                        <div id="progress-bar" class="progress-bar-fill bg-blue-600 h-4 rounded-full" style="width: 25%;"></div>
                     </div>
-                    <div class="flex items-center gap-2 w-full md:w-auto">
-                        <button id="new-profile-btn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg touch-button text-sm">Novo Perfil</button>
-                        <button id="history-btn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg touch-button text-sm">Histórico</button>
-                    </div>
+                    <p id="progress-text" class="text-center text-sm mt-2 text-gray-600" data-key="progress-step-1">Passo 1 de 4: Dados do Paciente</p>
                 </div>
-            </div>
 
-            <div id="input-section" class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                 <form id="lab-form">
-                    <h2 class="text-2xl font-semibold mb-6 text-gray-900 border-b pb-3">Dados do Paciente e Exames</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div>
-                            <label for="patient-name" class="block text-sm font-medium required-label">Nome</label>
-                            <input type="text" id="patient-name" name="patient_name" class="mt-1 w-full rounded-md p-2 text-base border-gray-300" required>
-                        </div>
-                        <div>
-                            <label for="patient-age" class="block text-sm font-medium required-label">Idade (anos)</label>
-                            <input type="number" id="patient-age" name="patient_age" class="mt-1 w-full rounded-md p-2 text-base border-gray-300" required>
-                        </div>
-                        <div>
-                            <label for="patient-gender" class="block text-sm font-medium required-label">Sexo</label>
-                            <select id="patient-gender" name="patient_gender" class="mt-1 w-full rounded-md p-2 text-base border-gray-300" required>
-                                <option value="">Selecione...</option>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Feminino">Feminino</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Colunas de Exames -->
-                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
-                            <h3 class="text-lg font-semibold">Exame de Sangue (Série Vermelha)</h3>
-                            <div><label for="hemoglobina">Hemoglobina (g/dL)</label><input type="text" id="hemoglobina" name="hemoglobina" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="hematocrito">Hematócrito (%)</label><input type="text" id="hematocrito" name="hematocrito" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="hematies">G. Vermelhos (x10⁶/µL)</label><input type="text" id="hematies" name="hematies" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="vcm">VCM (fL)</label><input type="text" id="vcm" name="vcm" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="hcm">HCM (pg)</label><input type="text" id="hcm" name="hcm" class="mt-1 w-full rounded-md p-2"></div>
-                        </div>
-                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
-                            <h3 class="text-lg font-semibold">Exame de Sangue (Série Branca)</h3>
-                            <div><label for="leucocitos">Leucócitos (/mm³)</label><input type="text" id="leucocitos" name="leucocitos" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="neutrofilos">Neutrófilos (%)</label><input type="text" id="neutrofilos" name="neutrofilos" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="linfocitos">Linfócitos (%)</label><input type="text" id="linfocitos" name="linfocitos" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="monocitos">Monócitos (%)</label><input type="text" id="monocitos" name="monocitos" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="eosinofilos">Eosinófilos (%)</label><input type="text" id="eosinofilos" name="eosinofilos" class="mt-1 w-full rounded-md p-2"></div>
-                             <div><label for="cayados">Bastonetes (%)</label><input type="text" id="cayados" name="cayados" class="mt-1 w-full rounded-md p-2"></div>
-                        </div>
-                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
-                            <h3 class="text-lg font-semibold">Bioquímica e Coagulação</h3>
-                            <div><label for="glicose">Glicemia (mg/dL)</label><input type="text" id="glicose" name="glicose" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="creatinina">Creatinina (mg/dL)</label><input type="text" id="creatinina" name="creatinina" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="ast_tgo">AST/TGO (U/L)</label><input type="text" id="ast_tgo" name="ast_tgo" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="alt_tgp">ALT/TGP (U/L)</label><input type="text" id="alt_tgp" name="alt_tgp" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="plaquetas">Plaquetas (/mm³)</label><input type="text" id="plaquetas" name="plaquetas" class="mt-1 w-full rounded-md p-2"></div>
-                        </div>
-                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
-                            <h3 class="text-lg font-semibold">Testes para Doenças Regionais</h3>
-                            <h4 class="font-semibold text-sm text-gray-600">Chagas</h4>
-                            <div><label for="chagas_micrometodo">Micrométodo (Recém-nascido)</label><input type="text" id="chagas_micrometodo" name="chagas_micrometodo" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="chagas_serologia_materna">Sorologia (Mãe)</label><input type="text" id="chagas_serologia_materna" name="chagas_serologia_materna" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="chagas_serologia_nino">Sorologia (Criança >6m)</label><input type="text" id="chagas_serologia_nino" name="chagas_serologia_nino" class="mt-1 w-full rounded-md p-2"></div>
-                            <h4 class="font-semibold text-sm text-gray-600 pt-2">Dengue</h4>
-                            <div><label for="dengue_ns1">Antígeno NS1 / PCR</label><input type="text" id="dengue_ns1" name="dengue_ns1" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="dengue_serologia_igm">Sorologia IgM</label><input type="text" id="dengue_serologia_igm" name="dengue_serologia_igm" class="mt-1 w-full rounded-md p-2"></div>
-                        </div>
-                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
-                            <h3 class="text-lg font-semibold">Gasometria</h3>
-                            <div><label for="gasometria_ph">pH</label><input type="text" id="gasometria_ph" name="gasometria_ph" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="gasometria_pco2">pCO₂ (mmHg)</label><input type="text" id="gasometria_pco2" name="gasometria_pco2" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="gasometria_hco3">HCO₃⁻ (mmol/L)</label><input type="text" id="gasometria_hco3" name="gasometria_hco3" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="gasometria_po2">pO₂ (mmHg)</label><input type="text" id="gasometria_po2" name="gasometria_po2" class="mt-1 w-full rounded-md p-2"></div>
-                             <h3 class="text-lg font-semibold pt-4">Função do Fígado</h3>
-                            <div><label for="bilirrubina_direta">Bilirrubina Direta (mg/dL)</label><input type="text" id="bilirrubina_direta" name="bilirrubina_direta" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="bilirrubina_indireta">Bilirrubina Indireta (mg/dL)</label><input type="text" id="bilirrubina_indireta" name="bilirrubina_indireta" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="bilirrubina_total">Bilirrubina Total (mg/dL)</label><input type="text" id="bilirrubina_total" name="bilirrubina_total" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="albumina">Albumina (g/dL)</label><input type="text" id="albumina" name="albumina" class="mt-1 w-full rounded-md p-2"></div>
-                        </div>
-                        <div class="space-y-4 bg-slate-100 p-4 rounded-lg border">
-                            <h3 class="text-lg font-semibold">Eletrólitos</h3>
-                            <div><label for="eletrolitos_na">Sódio (Na+)</label><input type="text" id="eletrolitos_na" name="eletrolitos_na" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="eletrolitos_k">Potássio (K+)</label><input type="text" id="eletrolitos_k" name="eletrolitos_k" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="eletrolitos_cl">Cloro (Cl-)</label><input type="text" id="eletrolitos_cl" name="eletrolitos_cl" class="mt-1 w-full rounded-md p-2"></div>
-                            <div><label for="eletrolitos_ca">Cálcio (Ca²+)</label><input type="text" id="eletrolitos_ca" name="eletrolitos_ca" class="mt-1 w-full rounded-md p-2"></div>
+                    <!-- Passo 1: Dados do Paciente -->
+                    <div id="step-1" class="wizard-step active">
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step1-title">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            Dados do Paciente
+                        </h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label for="patient-name" class="block text-sm font-medium required-label" data-key="patient-name-label">Nome do Paciente</label>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <input type="text" id="patient-name" name="patient-name" class="w-full rounded-md p-2 border-gray-300" required>
+                                    <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-patient-name" data-text="Digite o nome completo do paciente.">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="patient-age" class="block text-sm font-medium required-label" data-key="patient-age-label">Idade (em anos)</label>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <input type="number" id="patient-age" name="patient-age" class="w-full rounded-md p-2 border-gray-300" required>
+                                    <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-patient-age" data-text="Digite a idade do paciente em anos.">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="is-pediatric" class="h-4 w-4 rounded border-gray-300">
+                                <label for="is-pediatric" class="ml-2 text-sm font-medium" data-key="is-pediatric-label">Marque se for um paciente pediátrico (criança)</label>
+                            </div>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded text-sm">
+                                <h2 class="font-bold text-yellow-800 mb-2" data-key="consent-title">Termo de Consentimento</h2>
+                                <p data-key="consent-text">Declaro que as informações inseridas são para apoio à triagem e não substituem uma consulta médica. Os dados serão armazenados de forma segura apenas no seu dispositivo.</p>
+                                <div class="mt-3">
+                                    <input type="checkbox" id="consent-check" name="consent-check" class="h-4 w-4 rounded" required>
+                                    <label for="consent-check" class="ml-2 font-medium required-label" data-key="consent-agree">Li e Concordo</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-8">
-                        <label for="outros_dados" class="block text-sm font-medium required-label">Sinais, Sintomas e História do Paciente</label>
-                        <textarea id="outros_dados" name="outros_dados" rows="4" class="mt-1 block w-full rounded-md p-2 border-gray-300" placeholder="Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes..." required></textarea>
+                    <!-- Passo 2: Exames -->
+                    <div id="step-2" class="wizard-step">
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step2-title">
+                           <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            Resultados dos Exames
+                        </h2>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2" data-key="mode-select-label">Selecione o modo de preenchimento:</label>
+                            <div class="flex gap-4">
+                                <button type="button" id="fast-mode-btn" class="flex-1 bg-blue-100 text-blue-800 font-semibold p-3 rounded-lg border-2 border-blue-600" data-key="fast-mode-btn">Triagem Rápida</button>
+                                <button type="button" id="full-mode-btn" class="flex-1 bg-gray-100 text-gray-800 font-semibold p-3 rounded-lg border-2 border-transparent" data-key="full-mode-btn">Modo Completo</button>
+                            </div>
+                        </div>
+                        <div id="lab-fields-container" class="space-y-6">
+                            <!-- Campos serão inseridos aqui pelo JS -->
+                        </div>
                     </div>
                     
-                    <div class="mt-8 pt-6 border-t text-center">
-                        <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-                            <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg touch-button">Analisar com IA (Gemini)</button>
-                            <button type="button" id="clear-form-btn" class="w-full md:w-auto bg-white hover:bg-gray-100 text-gray-700 font-bold rounded-lg shadow-md border touch-button">Limpar</button>
-                            <button type="button" id="install-app-btn" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg touch-button" style="display: none;">Instalar App</button>
+                    <!-- Passo 3: Sinais e Sintomas -->
+                    <div id="step-3" class="wizard-step">
+                         <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step3-title">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v12a4 4 0 01-4 4H7z"></path></svg>
+                            Sinais, Sintomas e História
+                        </h2>
+                        <div>
+                            <label for="outros_dados" class="block text-sm font-medium required-label" data-key="clinical-history-label">Descreva o que o paciente está sentindo</label>
+                            <div class="flex items-start gap-2 mt-1">
+                                <textarea id="outros_dados" name="outros_dados" rows="8" class="w-full rounded-md p-2 border-gray-300" data-key="clinical-history-placeholder" placeholder="Ex: Febre há 3 dias, dor de cabeça, sem apetite..." required></textarea>
+                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-clinical-history" data-text="Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes.">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                </button>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Passo 4: Revisão e Análise -->
+                    <div id="step-4" class="wizard-step">
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step4-title">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Revisão e Análise
+                        </h2>
+                        <p class="mb-4" data-key="review-text">Por favor, revise os dados inseridos antes de enviar para análise.</p>
+                        <div id="review-content" class="space-y-4 bg-gray-50 p-4 rounded-lg border max-h-96 overflow-y-auto">
+                            <!-- Conteúdo da revisão será inserido aqui -->
+                        </div>
+                        <div class="mt-8">
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6 text-lg" data-key="analyze-btn">
+                                ANALISAR
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Navegação -->
+                    <div id="nav-buttons" class="mt-8 pt-6 border-t flex justify-between items-center">
+                        <button type="button" id="prev-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg py-2 px-6" data-key="prev-btn">Voltar</button>
+                        <button type="button" id="next-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-2 px-6" data-key="next-btn">Próximo</button>
                     </div>
                 </form>
             </div>
 
-            <div id="loading-section" class="text-center my-10" style="display: none;">
+            <!-- Seções de Resultado -->
+            <div id="loading-section" class="text-center my-10 hidden">
                 <div class="loader ease-linear rounded-full border-8 border-t-8 h-24 w-24 mx-auto"></div>
-                <p class="mt-4 text-lg">Analisando dados... Por favor, aguarde.</p>
+                <p class="mt-4 text-lg" data-key="loading-text">Analisando dados... Por favor, aguarde.</p>
             </div>
-            
-            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg my-6" role="alert">
-                <strong class="font-bold">Ocorreu um erro!</strong>
-                <span id="error-content" class="block sm:inline"></span>
-            </div>
-
-            <div id="report-output" class="mt-10">
-                <!-- Área visível para o relatório -->
-                <div id="report-display-area"></div>
-            </div>
-            <!-- Área oculta, formatada para renderização do PDF -->
-            <div id="pdf-render-area"></div>
+            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg my-6"></div>
+            <div id="report-output" class="mt-10 hidden"></div>
         </main>
 
-        <footer class="text-center mt-12 text-sm text-gray-500 no-print">
-            <p>&copy; 2024 Laboratório Missionário.</p>
-            <p class="mt-4 text-xs text-red-700"><strong>AVISO LEGAL:</strong> Esta ferramenta é um auxílio e não substitui uma consulta médica qualificada.</p>
+        <footer class="text-center mt-12 text-sm text-gray-500">
+            <p data-key="footer-copyright">&copy; 2024 Laboratório Missionário.</p>
+            <div class="mt-2">
+                <a href="#" id="terms-link" class="underline" data-key="terms-link">Termos de Uso</a> | 
+                <a href="#" id="privacy-link" class="underline" data-key="privacy-link">Política de Privacidade</a>
+            </div>
+            <button id="install-app-btn" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg py-2 px-4 text-sm hidden" data-key="install-btn">Instalar App</button>
         </footer>
     </div>
 
     <script type="module">
+        // --- LIBS ---
         const { jsPDF } = window.jspdf;
 
-        // --- DATABASE HELPERS (localStorage) ---
-        const DB = {
-            get: (key) => JSON.parse(localStorage.getItem(key) || '[]'),
-            set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
-        };
-
         // --- STATE & DOM ELEMENTS ---
-        let activeProfileId = null;
+        let currentStep = 1;
+        const totalSteps = 4;
+        const form = document.getElementById('lab-form');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressContainer = document.getElementById('progress-container');
+        const navButtons = document.getElementById('nav-buttons');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
         const modal = document.getElementById('modal');
         const modalContent = document.getElementById('modal-content');
-        const labForm = document.getElementById('lab-form');
-        const clearBtn = document.getElementById('clear-form-btn');
-        const loadingSection = document.getElementById('loading-section');
-        const errorMessage = document.getElementById('error-message');
-        const reportOutput = document.getElementById('report-output');
-        const reportDisplayArea = document.getElementById('report-display-area');
-        const newProfileBtn = document.getElementById('new-profile-btn');
-        const historyBtn = document.getElementById('history-btn');
-        const profileSelect = document.getElementById('patient-profile-select');
+        const closeModalBtn = document.getElementById('close-modal-btn');
         const installBtn = document.getElementById('install-app-btn');
         let deferredPrompt;
 
-        // --- UTILITY FUNCTIONS ---
-        const showSection = (el, show) => el.style.display = show ? 'block' : 'none';
-        const showError = (msg) => {
-            const errorContent = document.getElementById('error-content');
-            errorContent.textContent = msg;
-            showSection(errorMessage, true);
+        // --- DATA ---
+        const allLabFields = {
+            // Triagem Rápida
+            "hemoglobina": { group: "Série Vermelha", quick: true },
+            "plaquetas": { group: "Coagulação", quick: true },
+            "leucocitos": { group: "Série Branca", quick: true },
+            "glicose": { group: "Bioquímica", quick: true },
+            "creatinina": { group: "Bioquímica", quick: true },
+            // Modo Completo
+            "hematocrito": { group: "Série Vermelha", quick: false },
+            "vcm": { group: "Série Vermelha", quick: false },
+            "hcm": { group: "Série Vermelha", quick: false },
+            "neutrofilos": { group: "Série Branca", quick: false },
+            "linfocitos": { group: "Série Branca", quick: false },
+            "monocitos": { group: "Série Branca", quick: false },
+            "eosinofilos": { group: "Série Branca", quick: false },
+            "bastonetes": { group: "Série Branca", quick: false },
+            "ast_tgo": { group: "Bioquímica", quick: false },
+            "alt_tgp": { group: "Bioquímica", quick: false },
+            "malaria_g_espessa": { group: "Doenças Infecciosas", quick: false },
+            "malaria_t_rapido": { group: "Doenças Infecciosas", quick: false },
+            "dengue_ns1": { group: "Doenças Infecciosas", quick: false },
+            "dengue_igm_igg": { group: "Doenças Infecciosas", quick: false },
+            "hiv_t_rapido": { group: "Doenças Infecciosas", quick: false },
+            "sifilis_t_rapido": { group: "Doenças Infecciosas", quick: false },
+            "hepatite_b_hbsag": { group: "Doenças Infecciosas", quick: false },
+            "hepatite_c_anti_hcv": { group: "Doenças Infecciosas", quick: false },
+            "tb_baciloscopia": { group: "Doenças Infecciosas", quick: false },
+            "chagas_sorologia": { group: "Doenças Infecciosas", quick: false },
+            "esquistossomose_ovos": { group: "Parasitologia", quick: false },
+            "helmintiases_fezes": { group: "Parasitologia", quick: false },
         };
-        const showModal = (content) => {
-            modalContent.innerHTML = content;
-            showSection(modal, true);
+
+        const translations = {
+            'pt-BR': {
+                'title': 'Laboratório Missionário',
+                'header-title': 'Laboratório Missionário ⚕️',
+                'header-subtitle': 'Ferramenta de apoio para triagem e análise de exames.',
+                'progress-title': 'Progresso',
+                'progress-step-1': 'Passo 1 de 4: Dados do Paciente',
+                'progress-step-2': 'Passo 2 de 4: Exames',
+                'progress-step-3': 'Passo 3 de 4: Sinais e Sintomas',
+                'progress-step-4': 'Passo 4 de 4: Revisão e Análise',
+                'step1-title': 'Dados do Paciente',
+                'patient-name-label': 'Nome do Paciente',
+                'patient-age-label': 'Idade (em anos)',
+                'is-pediatric-label': 'Marque se for um paciente pediátrico (criança)',
+                'consent-title': 'Termo de Consentimento',
+                'consent-text': 'Declaro que as informações inseridas são para apoio à triagem e não substituem uma consulta médica. Os dados serão armazenados de forma segura apenas no seu dispositivo.',
+                'consent-agree': 'Li e Concordo',
+                'step2-title': 'Resultados dos Exames',
+                'mode-select-label': 'Selecione o modo de preenchimento:',
+                'fast-mode-btn': 'Triagem Rápida',
+                'full-mode-btn': 'Modo Completo',
+                'step3-title': 'Sinais, Sintomas e História',
+                'clinical-history-label': 'Descreva o que o paciente está sentindo',
+                'clinical-history-placeholder': 'Ex: Febre há 3 dias, dor de cabeça, sem apetite...',
+                'step4-title': 'Revisão e Análise',
+                'review-text': 'Por favor, revise os dados inseridos antes de enviar para análise.',
+                'analyze-btn': 'ANALISAR',
+                'prev-btn': 'Voltar',
+                'next-btn': 'Próximo',
+                'loading-text': 'Analisando dados... Por favor, aguarde.',
+                'footer-copyright': '&copy; 2024 Laboratório Missionário.',
+                'terms-link': 'Termos de Uso',
+                'privacy-link': 'Política de Privacidade',
+                'install-btn': 'Instalar App',
+                'speak-patient-name': 'Digite o nome completo do paciente.',
+                'speak-patient-age': 'Digite a idade do paciente em anos.',
+                'speak-clinical-history': 'Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes.',
+                'report-pdf-btn': 'Gerar PDF',
+                'report-back-btn': 'Voltar para Edição',
+                'report-new-btn': 'Novo Atendimento (Início)',
+                'help-title': 'Como Usar a Ferramenta',
+                'help-step1': '<strong>Passo 1:</strong> Preencha os dados do paciente.',
+                'help-step2': '<strong>Passo 2:</strong> Escolha o modo de preenchimento e insira os resultados.',
+                'help-step3': '<strong>Passo 3:</strong> Descreva os sintomas do paciente.',
+                'help-step4': '<strong>Passo 4:</strong> Revise tudo e clique em "ANALISAR".',
+                'help-alert-title': 'Alerta Importante',
+                'help-alert-text': 'Os valores de referência dos exames podem variar com a região, altitude e clima. Sempre compare com os valores do laboratório local, se possível.',
+                'terms-title': 'Aviso Legal e Termos de Uso',
+                'privacy-title': 'Política de Privacidade',
+                // Parâmetros de Exames
+                "hemoglobina": { "label": "Hemoglobina (g/dL)", "explanation": "É uma proteína do sangue que carrega oxigênio. Se estiver baixa, pode indicar anemia (fraqueza, cansaço)." },
+                "plaquetas": { "label": "Plaquetas (/mm³)", "explanation": "São células que ajudam o sangue a coagular. Baixas aumentam risco de sangramento." },
+                "leucocitos": { "label": "Leucócitos (/mm³)", "explanation": "Glóbulos brancos que defendem o corpo contra infecções." },
+                "glicose": { "label": "Glicemia (mg/dL)", "explanation": "Mede o açúcar no sangue. Alto pode ser diabetes, baixo pode causar desmaio." },
+                "creatinina": { "label": "Creatinina (mg/dL)", "explanation": "Avalia a função dos rins." },
+                "hematocrito": { "label": "Hematócrito (%)", "explanation": "Mostra a porcentagem de sangue formada por glóbulos vermelhos." },
+                "vcm": { "label": "VCM (fL)", "explanation": "Mostra o tamanho médio das células vermelhas. Ajuda a descobrir o tipo de anemia." },
+                "hcm": { "label": "HCM (pg)", "explanation": "Mostra quanto de hemoglobina tem cada glóbulo vermelho." },
+                "neutrofilos": { "label": "Neutrófilos (%)", "explanation": "Tipo de leucócito que aumenta em infecções bacterianas." },
+                "linfocitos": { "label": "Linfócitos (%)", "explanation": "Outro tipo de glóbulo branco, aumenta em infecções virais." },
+                "monocitos": { "label": "Monócitos (%)", "explanation": "Defendem o corpo, aumentam em infecções e inflamações prolongadas." },
+                "eosinofilos": { "label": "Eosinófilos (%)", "explanation": "Aumentam em alergias e parasitoses (vermes)." },
+                "bastonetes": { "label": "Bastonetes (%)", "explanation": "Forma jovem dos neutrófilos, aumentam em infecções graves." },
+                "ast_tgo": { "label": "AST/TGO (U/L)", "explanation": "Enzima do fígado. Alta pode indicar problemas no fígado, como hepatite." },
+                "alt_tgp": { "label": "ALT/TGP (U/L)", "explanation": "Enzima do fígado, mais específica que a TGO. Alta pode indicar problemas no fígado." },
+                "malaria_g_espessa": { "label": "Malária (Gota Espessa)", "explanation": "Pesquisa de parasitas no sangue para saber se a pessoa está com malária." },
+                "malaria_t_rapido": { "label": "Malária (Teste Rápido)", "explanation": "Detecta antígenos do parasita no sangue, resultado em poucos minutos." },
+                "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detecta infecção recente, antes do corpo produzir anticorpos." },
+                "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Mostra contato recente (IgM) ou antigo (IgG) com o vírus." },
+                "hiv_t_rapido": { "label": "HIV (Teste Rápido)", "explanation": "Detecta anticorpos contra o HIV. Positivo precisa de confirmação." },
+                "sifilis_t_rapido": { "label": "Sífilis (Teste Rápido/VDRL)", "explanation": "Mostra se a pessoa tem ou já teve sífilis." },
+                "hepatite_b_hbsag": { "label": "Hepatite B (HBsAg)", "explanation": "Mostra infecção ativa pelo vírus da Hepatite B." },
+                "hepatite_c_anti_hcv": { "label": "Hepatite C (Anti-HCV)", "explanation": "Mostra contato com o vírus da Hepatite C." },
+                "tb_baciloscopia": { "label": "Tuberculose (Baciloscopia)", "explanation": "Procura o bacilo da tuberculose em secreção do pulmão." },
+                "chagas_sorologia": { "label": "Chagas (Sorologia)", "explanation": "Mostra se a pessoa está ou já esteve infectada pelo Trypanosoma cruzi." },
+                "esquistossomose_ovos": { "label": "Esquistossomose (Ovos)", "explanation": "Identifica ovos do parasita responsável pela esquistossomose nas fezes/urina." },
+                "helmintiases_fezes": { "label": "Helmintíases (Fezes)", "explanation": "Pesquisa de ovos e parasitas de vermes intestinais." },
+            },
+            'es': {
+                'title': 'Laboratorio Misionero',
+                'header-title': 'Laboratorio Misionero ⚕️',
+                'header-subtitle': 'Herramienta de apoyo para triaje y análisis de exámenes.',
+                'progress-title': 'Progreso',
+                'progress-step-1': 'Paso 1 de 4: Datos del Paciente',
+                'progress-step-2': 'Paso 2 de 4: Exámenes',
+                'progress-step-3': 'Paso 3 de 4: Signos y Síntomas',
+                'progress-step-4': 'Paso 4 de 4: Revisión y Análisis',
+                'step1-title': 'Datos del Paciente',
+                'patient-name-label': 'Nombre del Paciente',
+                'patient-age-label': 'Edad (en años)',
+                'is-pediatric-label': 'Marque si es un paciente pediátrico (niño/a)',
+                'consent-title': 'Término de Consentimiento',
+                'consent-text': 'Declaro que la información ingresada es para apoyo al triaje y no reemplaza una consulta médica. Los datos se almacenarán de forma segura solo en su dispositivo.',
+                'consent-agree': 'Leí y estoy de acuerdo',
+                'step2-title': 'Resultados de los Exámenes',
+                'mode-select-label': 'Seleccione el modo de ingreso:',
+                'fast-mode-btn': 'Triaje Rápido',
+                'full-mode-btn': 'Modo Completo',
+                'step3-title': 'Signos, Síntomas e Historia',
+                'clinical-history-label': 'Describa lo que el paciente está sintiendo',
+                'clinical-history-placeholder': 'Ej: Fiebre hace 3 días, dolor de cabeza, sin apetito...',
+                'step4-title': 'Revisión y Análisis',
+                'review-text': 'Por favor, revise los datos ingresados antes de enviar para análisis.',
+                'analyze-btn': 'ANALIZAR',
+                'prev-btn': 'Volver',
+                'next-btn': 'Siguiente',
+                'loading-text': 'Analizando datos... Por favor, espere.',
+                'footer-copyright': '&copy; 2024 Laboratorio Misionero.',
+                'terms-link': 'Términos de Uso',
+                'privacy-link': 'Política de Privacidad',
+                'install-btn': 'Instalar App',
+                'speak-patient-name': 'Ingrese el nombre completo del paciente.',
+                'speak-patient-age': 'Ingrese la edad del paciente en años.',
+                'speak-clinical-history': 'Describa aquí lo que el paciente siente, desde cuándo y otra información importante.',
+                'report-pdf-btn': 'Generar PDF',
+                'report-back-btn': 'Volver a Editar',
+                'report-new-btn': 'Nueva Consulta (Inicio)',
+                'help-title': 'Cómo Usar la Herramienta',
+                'help-step1': '<strong>Paso 1:</strong> Complete los datos del paciente.',
+                'help-step2': '<strong>Paso 2:</strong> Elija el modo de ingreso e ingrese los resultados.',
+                'help-step3': '<strong>Paso 3:</strong> Describa los síntomas del paciente.',
+                'help-step4': '<strong>Paso 4:</strong> Revise todo y haga clic en "ANALIZAR".',
+                'help-alert-title': 'Alerta Importante',
+                'help-alert-text': 'Los valores de referencia de los exámenes pueden variar según la región, altitud y clima. Siempre compare con los valores del laboratorio local, si es posible.',
+                'terms-title': 'Aviso Legal y Términos de Uso',
+                'privacy-title': 'Política de Privacidad',
+                // Parâmetros de Exames
+                "hemoglobina": { "label": "Hemoglobina (g/dL)", "explanation": "Es una proteína en la sangre que transporta oxígeno. Si está baja, puede indicar anemia (debilidad, cansancio)." },
+                "plaquetas": { "label": "Plaquetas (/mm³)", "explanation": "Son células que ayudan a la sangre a coagular. Bajas aumentan el riesgo de sangrado." },
+                "leucocitos": { "label": "Leucocitos (/mm³)", "explanation": "Glóbulos blancos que defienden el cuerpo contra infecciones." },
+                "glicose": { "label": "Glucemia (mg/dL)", "explanation": "Mide el azúcar en la sangre. Alto puede ser diabetes, bajo puede causar desmayos." },
+                "creatinina": { "label": "Creatinina (mg/dL)", "explanation": "Evalúa la función de los riñones." },
+                "hematocrito": { "label": "Hematocrito (%)", "explanation": "Muestra el porcentaje de sangre compuesto por glóbulos rojos." },
+                "vcm": { "label": "VCM (fL)", "explanation": "Muestra el tamaño promedio de los glóbulos rojos. Ayuda a descubrir el tipo de anemia." },
+                "hcm": { "label": "HCM (pg)", "explanation": "Muestra cuánta hemoglobina hay en cada glóbulo rojo." },
+                "neutrofilos": { "label": "Neutrófilos (%)", "explanation": "Tipo de leucocito que aumenta en infecciones bacterianas." },
+                "linfocitos": { "label": "Linfocitos (%)", "explanation": "Otro tipo de glóbulo blanco, aumenta en infecciones virales." },
+                "monocitos": { "label": "Monocitos (%)", "explanation": "Defienden el cuerpo, aumentan en infecciones e inflamaciones prolongadas." },
+                "eosinofilos": { "label": "Eosinófilos (%)", "explanation": "Aumentan en alergias y parasitosis (gusanos)." },
+                "bastonetes": { "label": "Cayados/Bandas (%)", "explanation": "Forma joven de los neutrófilos, aumentan en infecciones graves." },
+                "ast_tgo": { "label": "AST/TGO (U/L)", "explanation": "Enzima del hígado. Alta puede indicar problemas en el hígado, como hepatitis." },
+                "alt_tgp": { "label": "ALT/TGP (U/L)", "explanation": "Enzima del hígado, más específica que la TGO. Alta puede indicar problemas en el hígado." },
+                "malaria_g_espessa": { "label": "Malaria (Gota Gruesa)", "explanation": "Búsqueda de parásitos en la sangre para saber si la persona tiene malaria." },
+                "malaria_t_rapido": { "label": "Malaria (Test Rápido)", "explanation": "Detecta antígenos del parásito en la sangre, resultado en pocos minutos." },
+                "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detecta infección reciente, antes de que el cuerpo produzca anticuerpos." },
+                "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Muestra contacto reciente (IgM) o antiguo (IgG) con el virus." },
+                "hiv_t_rapido": { "label": "VIH (Test Rápido)", "explanation": "Detecta anticuerpos contra el VIH. Positivo necesita confirmación." },
+                "sifilis_t_rapido": { "label": "Sífilis (Test Rápido/VDRL)", "explanation": "Muestra si la persona tiene o ha tenido sífilis." },
+                "hepatite_b_hbsag": { "label": "Hepatitis B (HBsAg)", "explanation": "Muestra infección activa por el virus de la Hepatitis B." },
+                "hepatite_c_anti_hcv": { "label": "Hepatitis C (Anti-HCV)", "explanation": "Muestra contacto con el virus de la Hepatitis C." },
+                "tb_baciloscopia": { "label": "Tuberculosis (Baciloscopía)", "explanation": "Busca el bacilo de la tuberculosis en la secreción del pulmón." },
+                "chagas_sorologia": { "label": "Chagas (Serología)", "explanation": "Muestra si la persona está o ha estado infectada por Trypanosoma cruzi." },
+                "esquistossomose_ovos": { "label": "Esquistosomiasis (Huevos)", "explanation": "Identifica huevos del parásito responsable de la esquistosomiasis en heces/orina." },
+                "helmintiases_fezes": { "label": "Helmintiasis (Heces)", "explanation": "Búsqueda de huevos y parásitos de gusanos intestinales." },
+            },
+            'en': {
+                'title': 'Missionary Laboratory',
+                'header-title': 'Missionary Laboratory ⚕️',
+                'header-subtitle': 'Support tool for triage and lab analysis.',
+                'progress-title': 'Progress',
+                'progress-step-1': 'Step 1 of 4: Patient Data',
+                'progress-step-2': 'Step 2 of 4: Lab Results',
+                'progress-step-3': 'Step 3 of 4: Signs & Symptoms',
+                'progress-step-4': 'Step 4 of 4: Review & Analyze',
+                'step1-title': 'Patient Data',
+                'patient-name-label': 'Patient Name',
+                'patient-age-label': 'Age (in years)',
+                'is-pediatric-label': 'Check if the patient is a child',
+                'consent-title': 'Consent Form',
+                'consent-text': 'I declare that the information provided is for triage support and does not replace a medical consultation. The data will be stored securely only on your device.',
+                'consent-agree': 'I have read and agree',
+                'step2-title': 'Lab Results',
+                'mode-select-label': 'Select entry mode:',
+                'fast-mode-btn': 'Quick Triage',
+                'full-mode-btn': 'Full Mode',
+                'step3-title': 'Signs, Symptoms & History',
+                'clinical-history-label': 'Describe what the patient is feeling',
+                'clinical-history-placeholder': 'e.g., Fever for 3 days, headache, no appetite...',
+                'step4-title': 'Review & Analyze',
+                'review-text': 'Please review the entered data before submitting for analysis.',
+                'analyze-btn': 'ANALYZE',
+                'prev-btn': 'Back',
+                'next-btn': 'Next',
+                'loading-text': 'Analyzing data... Please wait.',
+                'footer-copyright': '&copy; 2024 Missionary Laboratory.',
+                'terms-link': 'Terms of Use',
+                'privacy-link': 'Privacy Policy',
+                'install-btn': 'Install App',
+                'speak-patient-name': 'Enter the patient\'s full name.',
+                'speak-patient-age': 'Enter the patient\'s age in years.',
+                'speak-clinical-history': 'Describe what the patient is feeling, for how long, and other important information.',
+                'report-pdf-btn': 'Generate PDF',
+                'report-back-btn': 'Back to Edit',
+                'report-new-btn': 'New Consultation (Start)',
+                'help-title': 'How to Use This Tool',
+                'help-step1': '<strong>Step 1:</strong> Fill in the patient\'s data.',
+                'help-step2': '<strong>Step 2:</strong> Choose the entry mode and enter the results.',
+                'help-step3': '<strong>Step 3:</strong> Describe the patient\'s symptoms.',
+                'help-step4': '<strong>Step 4:</strong> Review everything and click "ANALYZE".',
+                'help-alert-title': 'Important Alert',
+                'help-alert-text': 'Reference values for lab tests can vary by region, altitude, and climate. Always compare with local lab values if possible.',
+                'terms-title': 'Disclaimer and Terms of Use',
+                'privacy-title': 'Privacy Policy',
+                // Parâmetros de Exames
+                "hemoglobina": { "label": "Hemoglobin (g/dL)", "explanation": "A protein in the blood that carries oxygen. If low, it may indicate anemia (weakness, fatigue)." },
+                "plaquetas": { "label": "Platelets (/mm³)", "explanation": "Cells that help blood clot. Low levels increase bleeding risk." },
+                "leucocitos": { "label": "Leukocytes (/mm³)", "explanation": "White blood cells that defend the body against infections." },
+                "glicose": { "label": "Glucose (mg/dL)", "explanation": "Measures blood sugar. High could be diabetes, low can cause fainting." },
+                "creatinina": { "label": "Creatinine (mg/dL)", "explanation": "Assesses kidney function." },
+                "hematocrito": { "label": "Hematocrit (%)", "explanation": "Shows the percentage of blood composed of red blood cells." },
+                "vcm": { "label": "MCV (fL)", "explanation": "Shows the average size of red blood cells. Helps determine the type of anemia." },
+                "hcm": { "label": "MCH (pg)", "explanation": "Shows how much hemoglobin is in each red blood cell." },
+                "neutrofilos": { "label": "Neutrophils (%)", "explanation": "A type of white blood cell that increases in bacterial infections." },
+                "linfocitos": { "label": "Lymphocytes (%)", "explanation": "Another type of white blood cell, increases in viral infections." },
+                "monocitos": { "label": "Monocytes (%)", "explanation": "Defend the body, increase in prolonged infections and inflammations." },
+                "eosinofilos": { "label": "Eosinophils (%)", "explanation": "Increase in allergies and parasitic infections (worms)." },
+                "bastonetes": { "label": "Bands (%)", "explanation": "Young form of neutrophils, increase in severe infections." },
+                "ast_tgo": { "label": "AST/GOT (U/L)", "explanation": "A liver enzyme. High levels can indicate liver problems like hepatitis." },
+                "alt_tgp": { "label": "ALT/GPT (U/L)", "explanation": "A liver enzyme, more specific than AST. High levels can indicate liver problems." },
+                "malaria_g_espessa": { "label": "Malaria (Thick Smear)", "explanation": "Searches for parasites in the blood to determine if the person has malaria." },
+                "malaria_t_rapido": { "label": "Malaria (Rapid Test)", "explanation": "Detects parasite antigens in the blood, with results in minutes." },
+                "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detects recent infection, before the body produces antibodies." },
+                "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Shows recent (IgM) or past (IgG) contact with the virus." },
+                "hiv_t_rapido": { "label": "HIV (Rapid Test)", "explanation": "Detects antibodies against HIV. A positive result needs confirmation." },
+                "sifilis_t_rapido": { "label": "Syphilis (Rapid Test/VDRL)", "explanation": "Shows if the person has or has had syphilis." },
+                "hepatite_b_hbsag": { "label": "Hepatitis B (HBsAg)", "explanation": "Shows active infection with the Hepatitis B virus." },
+                "hepatite_c_anti_hcv": { "label": "Hepatitis C (Anti-HCV)", "explanation": "Shows contact with the Hepatitis C virus." },
+                "tb_baciloscopia": { "label": "Tuberculosis (Sputum Smear)", "explanation": "Looks for the tuberculosis bacillus in lung secretions." },
+                "chagas_sorologia": { "label": "Chagas (Serology)", "explanation": "Shows if the person is or has been infected with Trypanosoma cruzi." },
+                "esquistossomose_ovos": { "label": "Schistosomiasis (Ova)", "explanation": "Identifies eggs of the parasite responsible for schistosomiasis in stool/urine." },
+                "helmintiases_fezes": { "label": "Helminthiasis (Stool)", "explanation": "Searches for eggs and parasites of intestinal worms." },
+            },
         };
-        const hideModal = () => showSection(modal, false);
-        
-        // --- PWA INSTALLATION LOGIC ---
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            showSection(installBtn, true);
-        });
 
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to the install prompt: ${outcome}`);
-                deferredPrompt = null;
-                showSection(installBtn, false);
-            }
-        });
-
-        // --- SERVICE WORKER REGISTRATION ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js') // CORREÇÃO: Removido o './'
-                  .then(reg => console.log('Service Worker registrado:', reg.scope))
-                  .catch(err => console.error('SW erro:', err));
-            });
-        }
-
-        // --- PROFILE MANAGEMENT ---
-        function loadProfiles() {
-            const profiles = DB.get('profiles');
-            profileSelect.innerHTML = '<option value="">Selecione um perfil...</option>';
-            profiles.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = `${p.name} (${p.age} anos, ${p.isPediatric ? 'Criança' : 'Adulto'})`;
-                profileSelect.appendChild(option);
-            });
-            if (activeProfileId) profileSelect.value = activeProfileId;
-        }
-
-        function selectProfile(id) {
-            const profiles = DB.get('profiles');
-            const profile = profiles.find(p => p.id === id);
-            if (profile) {
-                activeProfileId = id;
-                document.getElementById('patient-name').value = profile.name;
-                document.getElementById('patient-age').value = profile.age;
-                document.getElementById('patient-gender').value = profile.gender;
-                document.body.classList.toggle('pediatric-mode', profile.isPediatric);
-            } else {
-                activeProfileId = null;
-                labForm.reset();
-            }
-        }
-
-        function showNewProfileForm() {
-            showModal(`
-                <h2 class="text-2xl font-bold mb-4">Novo Perfil de Paciente</h2>
-                <form id="new-profile-form" class="space-y-4">
-                    <input type="text" id="new-name" placeholder="Nome Completo" class="w-full rounded-md p-2 border" required>
-                    <input type="number" id="new-age" placeholder="Idade (anos)" class="w-full rounded-md p-2 border" required>
-                    <select id="new-gender" class="w-full rounded-md p-2 border" required>
-                        <option value="">Selecione o Sexo...</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Feminino">Feminino</option>
-                    </select>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="new-is-pediatric" class="h-4 w-4 rounded">
-                        <label for="new-is-pediatric" class="ml-2">É um paciente pediátrico?</label>
-                    </div>
-                    <div class="flex justify-end gap-4 pt-4">
-                        <button type="button" id="cancel-profile" class="bg-gray-300 hover:bg-gray-400 font-bold rounded-lg touch-button">Cancelar</button>
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg touch-button">Salvar</button>
-                    </div>
-                </form>
-            `);
-            document.getElementById('new-profile-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const newProfile = {
-                    id: `profile_${Date.now()}`,
-                    name: document.getElementById('new-name').value,
-                    age: document.getElementById('new-age').value,
-                    gender: document.getElementById('new-gender').value,
-                    isPediatric: document.getElementById('new-is-pediatric').checked,
-                };
-                const profiles = DB.get('profiles');
-                profiles.push(newProfile);
-                DB.set('profiles', profiles);
-                activeProfileId = newProfile.id;
-                loadProfiles();
-                selectProfile(activeProfileId);
-                hideModal();
-            });
-            document.getElementById('cancel-profile').addEventListener('click', hideModal);
-        }
-
-        // --- HISTORY MANAGEMENT ---
-        function saveCaseToHistory(reportData) {
-            const history = DB.get('history');
-            history.unshift(reportData);
-            if (history.length > 50) history.pop();
-            DB.set('history', history);
-        }
-
-        function showHistory() {
-            const history = DB.get('history');
-            let content = '<h2 class="text-2xl font-bold mb-4">Histórico de Atendimentos</h2>';
-            if (history.length === 0) {
-                content += '<p>Nenhum atendimento salvo.</p>';
-            } else {
-                content += '<div class="space-y-4">';
-                history.forEach((item, index) => {
-                    content += `
-                        <div class="border p-4 rounded-lg">
-                            <p><strong>Paciente:</strong> ${item.patient.name}</p>
-                            <p><strong>Data:</strong> ${new Date(item.timestamp).toLocaleString('pt-BR')}</p>
-                            <button class="view-history-item text-blue-600 underline" data-index="${index}">Ver Relatório</button>
-                        </div>
-                    `;
-                });
-                content += '</div>';
-            }
-            content += '<div class="flex justify-end pt-4"><button id="close-history" class="bg-gray-300 hover:bg-gray-400 font-bold rounded-lg touch-button">Fechar</button></div>';
-            showModal(content);
-            document.getElementById('close-history').addEventListener('click', hideModal);
-            document.querySelectorAll('.view-history-item').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const item = history[e.target.dataset.index];
-                    displayReport(item.reports, item.patient);
-                    hideModal();
-                });
-            });
-        }
-        
-        // --- REPORTING & SHARING ---
-        function displayReport(reports, patient) {
-            let html = '<div class="bg-white p-6 rounded-lg shadow-md border">';
-            if (reports.ia) {
-                html += `
-                    <div>
-                        <h2 class="text-2xl font-bold mb-4">Orientações da Análise (IA)</h2>
-                        <div class="prose max-w-none">${reports.ia.replace(/\n/g, '<br>')}</div>
-                    </div>`;
-            }
-            html += `
-                <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center gap-4 no-print">
-                    <button type="button" id="pdf-report-btn" class="w-full md:w-auto bg-red-600 text-white font-bold rounded-lg touch-button">Gerar PDF</button>
-                    <button type="button" id="whatsapp-report-btn" class="w-full md:w-auto bg-green-600 text-white font-bold rounded-lg touch-button">Enviar Relatório</button>
-                </div>`;
-            html += '</div>';
-            reportDisplayArea.innerHTML = html;
-            showSection(reportOutput, true);
-            reportOutput.scrollIntoView({ behavior: 'smooth' });
+        // --- WIZARD NAVIGATION ---
+        function showStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${step}`).classList.add('active');
             
-            document.getElementById('pdf-report-btn').addEventListener('click', () => generatePdf(patient.name, reports));
-            document.getElementById('whatsapp-report-btn').addEventListener('click', () => {
-                let reportContent = `*Relatório do Laboratório Missionário para ${patient.name}*\n\n`;
+            progressBar.style.width = `${(step / totalSteps) * 100}%`;
+            const lang = document.documentElement.lang || 'pt-BR';
+            progressText.dataset.key = `progress-step-${step}`;
+            progressText.textContent = translations[lang][`progress-step-${step}`];
+
+            prevBtn.style.display = step === 1 ? 'none' : 'inline-block';
+            nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block';
+            
+            if (step === totalSteps) {
+                updateReviewContent();
+            }
+        }
+
+        function validateStep(step) {
+            const inputs = document.querySelectorAll(`#step-${step} [required]`);
+            for (let input of inputs) {
+                if ((input.type === 'checkbox' && !input.checked) || (input.type !== 'checkbox' && !input.value.trim())) {
+                    alert(`Por favor, preencha o campo obrigatório: "${input.labels[0].textContent.replace(' *','')}."`);
+                    input.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (validateStep(currentStep)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // --- LAB FIELDS MODE ---
+        function renderLabFields(isQuickMode) {
+            const container = document.getElementById('lab-fields-container');
+            container.innerHTML = '';
+            const groups = {};
+            const lang = document.documentElement.lang || 'pt-BR';
+
+            Object.entries(allLabFields).forEach(([key, data]) => {
+                if (!isQuickMode || data.quick) {
+                    if (!groups[data.group]) {
+                        groups[data.group] = [];
+                    }
+                    groups[data.group].push({ key, ...data });
+                }
+            });
+
+            for (const groupName in groups) {
+                const groupContainer = document.createElement('div');
+                groupContainer.className = 'space-y-4 bg-gray-100 p-4 rounded-lg border';
                 
-                const labData = {};
-                new FormData(labForm).forEach((value, key) => {
-                    if (value.trim()) labData[key.replace(/_/g, ' ')] = value;
+                const groupTitle = document.createElement('h3');
+                groupTitle.className = 'text-lg font-semibold text-gray-700';
+                groupTitle.textContent = groupName; // This could be translated too if needed
+                groupContainer.appendChild(groupTitle);
+
+                groups[groupName].forEach(field => {
+                    const fieldTranslations = translations[lang][field.key] || { label: field.key, explanation: "No description available." };
+                    const fieldHTML = `
+                        <div>
+                            <label for="${field.id}" class="flex items-center text-sm font-medium">
+                                ${fieldTranslations.label}
+                                <button type="button" class="info-btn ml-2 text-gray-400 hover:text-blue-600" data-title="${fieldTranslations.label}" data-explanation="${fieldTranslations.explanation}">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                </button>
+                            </label>
+                            <div class="flex items-center gap-2 mt-1">
+                                <input type="text" id="${field.id}" name="${field.id}" class="w-full rounded-md p-2 border-gray-300">
+                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-text="Digite o valor para ${fieldTranslations.label}. Se não souber, pode deixar em branco.">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                </button>
+                            </div>
+                        </div>`;
+                    groupContainer.insertAdjacentHTML('beforeend', fieldHTML);
                 });
-                reportContent += "*DADOS INFORMADOS:*\n"
-                reportContent += Object.entries(labData).map(([key, value]) => `*- ${key}:* ${value}`).join('\n');
-                reportContent += "\n\n---\n\n";
-
-                if (reports.ia) {
-                    reportContent += `*ANÁLISE DA IA (Gemini):*\n${reports.ia}\n\n`;
-                }
-                const message = encodeURIComponent(reportContent);
-                window.open(`https://wa.me/?text=${message}`, '_blank');
-            });
-        }
-
-        async function generatePdf(patientName, reports) {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
-
-            let y = 40;
-            const margin = 40;
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const usableWidth = pageWidth - margin * 2;
-
-            pdf.setFontSize(18).text(`Relatório para ${patientName}`, margin, y);
-            y += 30;
-
-            if (reports.ia) {
-                pdf.setFontSize(14).text('Orientações da Análise (IA)', margin, y);
-                y += 20;
-                const iaText = pdf.splitTextToSize(reports.ia, usableWidth);
-                pdf.setFontSize(10).text(iaText, margin, y);
+                container.appendChild(groupContainer);
             }
-            
-            pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`);
+            addSpeakButtonListeners();
+            addInfoButtonListeners();
         }
 
-        async function generateGeminiReport() {
-            showSection(errorMessage, false);
-            showSection(reportOutput, false);
-            showSection(loadingSection, true);
 
-            const profiles = DB.get('profiles');
-            const currentProfile = profiles.find(p => p.id === activeProfileId);
-            const isPediatric = currentProfile ? currentProfile.isPediatric : false;
+        document.getElementById('fast-mode-btn').addEventListener('click', (e) => {
+            renderLabFields(true);
+            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
+            document.getElementById('full-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
+        });
+        document.getElementById('full-mode-btn').addEventListener('click', (e) => {
+            renderLabFields(false);
+            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
+            document.getElementById('fast-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
+        });
 
-            const labData = {};
-            new FormData(labForm).forEach((value, key) => {
-                if (value.trim()) {
-                    const cleanKey = key.replace(/_/g, ' ');
-                    labData[cleanKey] = value;
+        // --- REVIEW STEP ---
+        function updateReviewContent() {
+            const reviewContent = document.getElementById('review-content');
+            const formData = new FormData(form);
+            let html = '<ul>';
+            formData.forEach((value, key) => {
+                const el = form.elements[key];
+                if (value && el && el.labels) {
+                     const label = el.labels[0] ? el.labels[0].textContent.replace(' *', '') : key;
+                     if(key !== 'consent-check'){
+                        html += `<li class="py-1"><strong class="font-semibold">${label}:</strong> ${value}</li>`;
+                     }
                 }
             });
+             html += `<li><strong class="font-semibold">Paciente Pediátrico:</strong> ${document.getElementById('is-pediatric').checked ? 'Sim' : 'Não'}</li>`;
+            html += '</ul>';
+            reviewContent.innerHTML = html;
+        }
 
-            const patientType = isPediatric ? 'criança' : 'adulto';
+        // --- ACCESSIBILITY (TEXT-TO-SPEECH & INFO) ---
+        function addSpeakButtonListeners() {
+            document.querySelectorAll('.speak-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const textToSpeak = btn.dataset.text;
+                    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                    utterance.lang = document.documentElement.lang || 'pt-BR';
+                    speechSynthesis.speak(utterance);
+                });
+            });
+        }
+        
+        function addInfoButtonListeners() {
+            document.querySelectorAll('.info-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const title = btn.dataset.title;
+                    const explanation = btn.dataset.explanation;
+                    showModal(`
+                        <h2 class="text-xl font-bold mb-2">${title}</h2>
+                        <p>${explanation}</p>
+                    `);
+                });
+            });
+        }
+
+        // --- MODAL & LEGAL ---
+        function showModal(content) {
+            modalContent.innerHTML = content;
+            modal.classList.remove('hidden');
+        }
+        closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.add('hidden'); });
+
+        document.getElementById('help-btn').addEventListener('click', () => {
+            const lang = document.documentElement.lang || 'pt-BR';
+            const t = translations[lang];
+            showModal(`
+                <h2 class="text-2xl font-bold mb-4">${t['help-title']}</h2>
+                <p class="mb-2">${t['help-step1']}</p>
+                <p class="mb-2">${t['help-step2']}</p>
+                <p class="mb-2">${t['help-step3']}</p>
+                <p class="mb-4">${t['help-step4']}</p>
+                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                    <h3 class="font-bold text-yellow-800">${t['help-alert-title']}</h3>
+                    <p class="text-sm">${t['help-alert-text']}</p>
+                </div>
+            `);
+        });
+
+        document.getElementById('terms-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            const lang = document.documentElement.lang || 'pt-BR';
+            const t = translations[lang];
+            showModal(`
+                <h2 class="font-bold text-lg text-yellow-700 mb-2">${t['terms-title']}</h2>
+                <p class="text-sm text-gray-700 mb-2"><strong>Esta ferramenta não substitui uma consulta médica presencial.</strong> Os resultados destinam-se ao apoio em triagem.</p>
+                <ul class="list-disc pl-5 text-sm text-gray-700">
+                    <li>As informações inseridas são de responsabilidade do usuário.</li>
+                    <li>Utilize a ferramenta em local privado e seguro.</li>
+                    <li>Os dados nunca serão compartilhados com terceiros.</li>
+                    <li>Em urgências, procure atendimento presencial.</li>
+                </ul>
+            `);
+        });
+        
+        document.getElementById('privacy-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            const lang = document.documentElement.lang || 'pt-BR';
+            const t = translations[lang];
+            showModal(`
+                <h2 class="font-bold text-blue-800 mb-2">${t['privacy-title']}</h2>
+                <p class="text-sm">Os dados informados são usados apenas para a análise clínica e geração de relatórios. As informações são armazenadas localmente no seu dispositivo e não são transmitidas para servidores externos.</p>
+            `);
+        });
+        
+        // --- APP RESET FUNCTION ---
+        function resetApp() {
+            form.reset();
+            document.getElementById('report-output').classList.add('hidden');
+            progressContainer.classList.remove('hidden');
+            navButtons.classList.remove('hidden');
+            currentStep = 1;
+            showStep(1);
+            document.getElementById('fast-mode-btn').click();
+        }
+
+        // --- FORM SUBMISSION & API CALL ---
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            progressContainer.classList.add('hidden');
+            navButtons.classList.add('hidden');
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+            document.getElementById('loading-section').classList.remove('hidden');
+            document.getElementById('report-output').classList.add('hidden');
+            document.getElementById('error-message').classList.add('hidden');
+
+            const formData = new FormData(form);
+            const labData = {};
+            formData.forEach((value, key) => {
+                if (value.trim()) {
+                    labData[key] = value;
+                }
+            });
+            const isPediatric = document.getElementById('is-pediatric').checked;
+            const patientType = isPediatric ? `criança de ${labData['patient-age']} anos` : `adulto de ${labData['patient-age']} anos`;
+
             const promptText = `
-                Você é um profissional de saúde experiente em triagem clínica. O paciente é um(a) ${patientType} de ${labData['patient age']} anos, sexo ${labData['patient gender']}. Analise os dados abaixo e responda:
+                **PERSONA:** Você é um médico sênior, experiente em missões e telemedicina. Sua missão é orientar um missionário em campo, que tem conhecimento básico de saúde, mas não é médico. Use uma linguagem **empática, clara e direta**, como um mentor. Evite jargão médico complexo, mas explique os conceitos clínicos de forma simples.
 
-                - Explique os resultados dos exames em linguagem simples, clara e acolhedora, adequada para missionários não médicos.
-                - Se for uma criança, adicione recomendações específicas pediátricas adaptadas para idade.
-                - Destaque sinais de alerta prioritários.
-                - Sugira o próximo passo prático e seguro no campo.
+                **TAREFA:** Analise os dados do paciente abaixo e gere um relatório de triagem em HTML. O objetivo é fornecer uma orientação prática e segura para o missionário.
 
-                ## Dados:
-                ${Object.entries(labData).map(([k,v]) => `- ${k}: ${v}`).join('\n')}
+                **DADOS DO PACIENTE:**
+                - Tipo: ${patientType}
+                - Nome: ${labData['patient-name']}
+                - Idade: ${labData['patient-age']} anos
+                - Exames:
+                ${Object.entries(allLabFields).map(([key, data]) => labData[data.id] ? `  - ${translations['pt-BR'][key].label}: ${labData[data.id]}` : '').filter(Boolean).join('\n')}
+                - História Clínica: ${labData['outros_dados']}
+
+                **FORMATO DA RESPOSTA (HTML OBRIGATÓRIO):**
+                Sua resposta DEVE ser um único bloco de HTML, usando as classes do Tailwind CSS abaixo para formatação.
+
+                1.  **Título Principal (h2):** Um resumo claro e direto da situação.
+                    * Exemplo: \`<h2 class="text-2xl font-bold text-gray-800 mb-4">Análise Preliminar: Sinais de Anemia e Possível Infecção</h2>\`
+
+                2.  **Pontos de Atenção (Card Amarelo):** Destaque os resultados de exames mais preocupantes. Para cada ponto, explique o **significado clínico** em termos simples.
+                    * Use a estrutura: \`<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">\`
+                    * Dentro, use uma lista: \`<ul>\`
+                    * Cada item da lista (li) deve ter o nome do exame em negrito, seguido da explicação.
+                    * Exemplo: \`<li><strong>Hemoglobina Baixa:</strong> Isso indica anemia, ou seja, pode estar faltando oxigênio no sangue, o que causa cansaço e palidez.</li>\`
+
+                3.  **Hipóteses Diagnósticas (Card Azul):** Liste as possíveis causas para os achados, da mais provável para a menos provável.
+                    * Use a estrutura: \`<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md mb-6">\`
+                    * Dentro, use uma lista numerada: \`<ol>\`
+                    * Exemplo: \`<li><strong>Infecção Bacteriana:</strong> Sugerida pelo aumento dos leucócitos e neutrófilos.</li>\`
+
+                4.  **Recomendação Prática (Card Verde):** Dê os próximos passos claros e acionáveis para o missionário em campo. Separe em "O que fazer AGORA" e "O que observar".
+                    * Use a estrutura: \`<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md">\`
+                    * Use subtítulos (h4) para "O que fazer AGORA:" e "O que observar nas próximas horas/dias:".
+                    * Exemplo: \`<h4 class="font-bold text-gray-700">O que fazer AGORA:</h4><ul><li>- Iniciar hidratação oral vigorosa.</li></ul>\`
+
+                5.  **Cuidados Pediátricos (Opcional - Card Roxo):** Se o paciente for pediátrico, adicione esta seção.
+                    * Use a estrutura: \`<div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-md mt-6">\`
+                    * Dê orientações específicas para crianças.
+
+                **AVISO FINAL:** Inclua um aviso legal no final, em um parágrafo \`<p class="text-xs text-gray-500 mt-6">\`.
+                * Texto do aviso: "LEMBRETE: Esta é uma análise de triagem baseada em IA e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo."
             `;
-
+            
             try {
-                const apiKey = "AIzaSyBLKj7L2c4BEZwnSeD2s5PLDhrkkyiqr4A";
+                const apiKey = "AIzaSyAz6tEar6NJokgbEch5QLtbKL7dw_v6B3U";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
                 
                 const response = await fetch(apiUrl, {
@@ -467,42 +768,142 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) {
-                    const errorBody = await response.json();
-                    throw new Error(errorBody.error?.message || `Erro na API: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
                 
                 const result = await response.json();
-                const reportText = result.candidates[0].content.parts[0].text;
+                const reportHtml = result.candidates[0].content.parts[0].text;
                 
-                const patientData = { name: labData['patient name'], age: labData['patient age'] };
-                const caseData = {
-                    timestamp: Date.now(),
-                    patient: patientData,
-                    reports: { ia: reportText }
-                };
-                saveCaseToHistory(caseData);
-                displayReport(caseData.reports, patientData);
+                const reportOutput = document.getElementById('report-output');
+                
+                const lang = document.documentElement.lang || 'pt-BR';
+                const t = translations[lang];
+
+                reportOutput.innerHTML = `
+                    <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
+                    <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
+                        <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
+                            ${t['report-pdf-btn']}
+                        </button>
+                        <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
+                        <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
+                    </div>
+                `;
+
+                document.getElementById('generate-pdf-btn').addEventListener('click', () => {
+                    generatePdf(reportHtml, labData['patient-name']);
+                });
+                
+                document.getElementById('back-to-edit-btn').addEventListener('click', () => {
+                    reportOutput.classList.add('hidden');
+                    progressContainer.classList.remove('hidden');
+                    navButtons.classList.remove('hidden');
+                    showStep(4);
+                });
+
+                document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
+
+                reportOutput.classList.remove('hidden');
+                reportOutput.scrollIntoView({ behavior: 'smooth' });
 
             } catch (error) {
-                showError(`Falha ao gerar relatório com a IA: ${error.message}`);
+                document.getElementById('error-message').textContent = `Falha ao gerar relatório: ${error.message}`;
+                document.getElementById('error-message').classList.remove('hidden');
+                progressContainer.classList.remove('hidden');
+                navButtons.classList.remove('hidden');
             } finally {
-                showSection(loadingSection, false);
+                document.getElementById('loading-section').classList.add('hidden');
+            }
+        });
+        
+        async function generatePdf(reportHtml, patientName) {
+            const { jsPDF } = window.jspdf;
+            const reportElement = document.getElementById('report-content-for-pdf');
+            
+            try {
+                const canvas = await html2canvas(reportElement, {
+                    scale: 2,
+                    useCORS: true,
+                    windowWidth: reportElement.scrollWidth,
+                    windowHeight: reportElement.scrollHeight
+                });
+                
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                  position = heightLeft - imgHeight;
+                  pdf.addPage();
+                  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                  heightLeft -= pageHeight;
+                }
+                
+                pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`);
+
+            } catch (error) {
+                console.error("Erro ao gerar PDF:", error);
+                alert("Não foi possível gerar o PDF.");
             }
         }
 
-        // --- INITIAL SETUP ---
-        labForm.addEventListener('submit', (e) => {
+        // --- PWA INSTALLATION ---
+        window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
-            generateGeminiReport();
+            deferredPrompt = e;
+            installBtn.classList.remove('hidden');
         });
-        newProfileBtn.addEventListener('click', showNewProfileForm);
-        historyBtn.addEventListener('click', showHistory);
-        profileSelect.addEventListener('change', (e) => selectProfile(e.target.value));
-        clearBtn.addEventListener('click', () => { labForm.reset(); activeProfileId = null; profileSelect.value = ""; });
-        modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
-        
-        loadProfiles();
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installBtn.classList.add('hidden');
+            }
+        });
+
+        // --- TRANSLATION ---
+        function setLanguage(lang) {
+            document.documentElement.lang = lang;
+            localStorage.setItem('preferredLanguage', lang);
+            const t = translations[lang] || translations['pt-BR'];
+
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (t[key]) {
+                    if (el.tagName === 'TEXTAREA' && el.hasAttribute('placeholder')) {
+                        el.placeholder = t[key];
+                    } else if(el.hasAttribute('data-text')) {
+                        el.dataset.text = t[key];
+                    }
+                    else {
+                        el.innerHTML = t[key];
+                    }
+                }
+            });
+            renderLabFields(document.querySelector('#fast-mode-btn').classList.contains('border-blue-600'));
+        }
+
+        document.querySelectorAll('.lang-switcher button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setLanguage(btn.dataset.lang);
+            });
+        });
+
+        // --- INITIALIZATION ---
+        const savedLang = localStorage.getItem('preferredLanguage') || 'pt-BR';
+        setLanguage(savedLang);
+        showStep(currentStep);
+        renderLabFields(true); // Inicia no modo rápido
     </script>
 </body>
 </html>
