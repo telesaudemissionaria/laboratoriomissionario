@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-key="title">Laboratório Missionário</title>
+    <title data-key="title">MISSIONLAB</title>
     <meta name="theme-color" content="#1d4ed8"/>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -54,14 +54,14 @@
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
         <header class="text-center mb-8">
             <div class="flex justify-center items-center mb-4 gap-4">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900" data-key="header-title">Laboratório Missionário ⚕️</h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900" data-key="header-title">MISSIONLAB ⚕️</h1>
                 <div class="lang-switcher flex gap-2">
                     <button data-lang="pt-BR" title="Português (Brasil)"><img src="https://flagcdn.com/br.svg" alt="Bandeira do Brasil" class="w-8 h-auto"></button>
                     <button data-lang="es" title="Español"><img src="https://flagcdn.com/es.svg" alt="Bandeira da Espanha" class="w-8 h-auto"></button>
                     <button data-lang="en" title="English"><img src="https://flagcdn.com/us.svg" alt="Bandeira dos EUA" class="w-8 h-auto"></button>
                 </div>
             </div>
-            <p class="text-md text-gray-600 mt-2" data-key="header-subtitle">Ferramenta de apoio para triagem e análise de exames.</p>
+            <p class="text-md text-gray-600 mt-2" data-key="header-subtitle">Ferramenta de apoio para triagem e análise de exames em campo.</p>
         </header>
 
         <main>
@@ -186,7 +186,7 @@
         </main>
 
         <footer class="text-center mt-12 text-sm text-gray-500">
-            <p data-key="footer-copyright">&copy; 2024 Laboratório Missionário.</p>
+            <p data-key="footer-copyright">&copy; 2024 MISSIONLAB.</p>
             <div class="mt-2">
                 <a href="#" id="terms-link" class="underline" data-key="terms-link">Termos de Uso</a> | 
                 <a href="#" id="privacy-link" class="underline" data-key="privacy-link">Política de Privacidade</a>
@@ -218,22 +218,22 @@
         // --- DATA ---
         const allLabFields = {
             // Triagem Rápida
-            "hemoglobina": { group: "Série Vermelha", quick: true },
-            "plaquetas": { group: "Coagulação", quick: true },
-            "leucocitos": { group: "Série Branca", quick: true },
-            "glicose": { group: "Bioquímica", quick: true },
-            "creatinina": { group: "Bioquímica", quick: true },
+            "hemoglobina": { group: "Série Vermelha", quick: true, range: { min: 1, max: 25 } },
+            "plaquetas": { group: "Coagulação", quick: true, range: { min: 1000, max: 1000000 } },
+            "leucocitos": { group: "Série Branca", quick: true, range: { min: 100, max: 100000 } },
+            "glicose": { group: "Bioquímica", quick: true, range: { min: 10, max: 1000 } },
+            "creatinina": { group: "Bioquímica", quick: true, range: { min: 0.1, max: 20 } },
             // Modo Completo
-            "hematocrito": { group: "Série Vermelha", quick: false },
-            "vcm": { group: "Série Vermelha", quick: false },
-            "hcm": { group: "Série Vermelha", quick: false },
-            "neutrofilos": { group: "Série Branca", quick: false },
-            "linfocitos": { group: "Série Branca", quick: false },
-            "monocitos": { group: "Série Branca", quick: false },
-            "eosinofilos": { group: "Série Branca", quick: false },
-            "bastonetes": { group: "Série Branca", quick: false },
-            "ast_tgo": { group: "Bioquímica", quick: false },
-            "alt_tgp": { group: "Bioquímica", quick: false },
+            "hematocrito": { group: "Série Vermelha", quick: false, range: { min: 10, max: 80 } },
+            "vcm": { group: "Série Vermelha", quick: false, range: { min: 50, max: 150 } },
+            "hcm": { group: "Série Vermelha", quick: false, range: { min: 15, max: 50 } },
+            "neutrofilos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
+            "linfocitos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
+            "monocitos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
+            "eosinofilos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
+            "bastonetes": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
+            "ast_tgo": { group: "Bioquímica", quick: false, range: { min: 1, max: 2000 } },
+            "alt_tgp": { group: "Bioquímica", quick: false, range: { min: 1, max: 2000 } },
             "malaria_g_espessa": { group: "Doenças Infecciosas", quick: false },
             "malaria_t_rapido": { group: "Doenças Infecciosas", quick: false },
             "dengue_ns1": { group: "Doenças Infecciosas", quick: false },
@@ -250,9 +250,9 @@
 
         const translations = {
             'pt-BR': {
-                'title': 'Laboratório Missionário',
-                'header-title': 'Laboratório Missionário ⚕️',
-                'header-subtitle': 'Ferramenta de apoio para triagem e análise de exames.',
+                'title': 'MISSIONLAB',
+                'header-title': 'MISSIONLAB ⚕️',
+                'header-subtitle': 'Ferramenta de apoio para triagem e análise de exames em campo.',
                 'progress-title': 'Progresso',
                 'progress-step-1': 'Passo 1 de 4: Dados do Paciente',
                 'progress-step-2': 'Passo 2 de 4: Exames',
@@ -278,7 +278,7 @@
                 'prev-btn': 'Voltar',
                 'next-btn': 'Próximo',
                 'loading-text': 'Analisando dados... Por favor, aguarde.',
-                'footer-copyright': '&copy; 2024 Laboratório Missionário.',
+                'footer-copyright': '&copy; 2024 MISSIONLAB.',
                 'terms-link': 'Termos de Uso',
                 'privacy-link': 'Política de Privacidade',
                 'install-btn': 'Instalar App',
@@ -327,9 +327,9 @@
                 "helmintiases_fezes": { "label": "Helmintíases (Fezes)", "explanation": "Pesquisa de ovos e parasitas de vermes intestinais." },
             },
             'es': {
-                'title': 'Laboratorio Misionero',
-                'header-title': 'Laboratorio Misionero ⚕️',
-                'header-subtitle': 'Herramienta de apoyo para triaje y análisis de exámenes.',
+                'title': 'MISSIONLAB',
+                'header-title': 'MISSIONLAB ⚕️',
+                'header-subtitle': 'Herramienta de apoyo para triaje y análisis de exámenes en campo.',
                 'progress-title': 'Progreso',
                 'progress-step-1': 'Paso 1 de 4: Datos del Paciente',
                 'progress-step-2': 'Paso 2 de 4: Exámenes',
@@ -355,7 +355,7 @@
                 'prev-btn': 'Volver',
                 'next-btn': 'Siguiente',
                 'loading-text': 'Analizando datos... Por favor, espere.',
-                'footer-copyright': '&copy; 2024 Laboratorio Misionero.',
+                'footer-copyright': '&copy; 2024 MISSIONLAB.',
                 'terms-link': 'Términos de Uso',
                 'privacy-link': 'Política de Privacidad',
                 'install-btn': 'Instalar App',
@@ -404,9 +404,9 @@
                 "helmintiases_fezes": { "label": "Helmintiasis (Heces)", "explanation": "Búsqueda de huevos y parásitos de gusanos intestinales." },
             },
             'en': {
-                'title': 'Missionary Laboratory',
-                'header-title': 'Missionary Laboratory ⚕️',
-                'header-subtitle': 'Support tool for triage and lab analysis.',
+                'title': 'MISSIONLAB',
+                'header-title': 'MISSIONLAB ⚕️',
+                'header-subtitle': 'Support tool for triage and lab analysis in the field.',
                 'progress-title': 'Progress',
                 'progress-step-1': 'Step 1 of 4: Patient Data',
                 'progress-step-2': 'Step 2 of 4: Lab Results',
@@ -432,7 +432,7 @@
                 'prev-btn': 'Back',
                 'next-btn': 'Next',
                 'loading-text': 'Analyzing data... Please wait.',
-                'footer-copyright': '&copy; 2024 Missionary Laboratory.',
+                'footer-copyright': '&copy; 2024 MISSIONLAB.',
                 'terms-link': 'Terms of Use',
                 'privacy-link': 'Privacy Policy',
                 'install-btn': 'Install App',
@@ -698,6 +698,16 @@
         // --- FORM SUBMISSION & API CALL ---
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Validação de Ranges
+            const validationWarnings = validateFieldRanges();
+            if (validationWarnings.length > 0) {
+                const message = "Atenção! Os seguintes valores parecem estar fora de uma faixa esperada:\n\n" + validationWarnings.join("\n") + "\n\nDeseja continuar com a análise mesmo assim?";
+                if (!confirm(message)) {
+                    return; // Para a execução se o usuário cancelar
+                }
+            }
+
             progressContainer.classList.add('hidden');
             navButtons.classList.add('hidden');
             document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
@@ -807,14 +817,90 @@
                 reportOutput.scrollIntoView({ behavior: 'smooth' });
 
             } catch (error) {
-                document.getElementById('error-message').textContent = `Falha ao gerar relatório: ${error.message}`;
-                document.getElementById('error-message').classList.remove('hidden');
-                progressContainer.classList.remove('hidden');
-                navButtons.classList.remove('hidden');
+                console.error("Falha detalhada na análise:", error);
+                if (error.message.includes('Failed to fetch')) {
+                    generateOfflineReport(labData);
+                } else {
+                    document.getElementById('error-message').textContent = `Falha ao gerar relatório: ${error.message}. Verifique sua chave de API e conexão.`;
+                    document.getElementById('error-message').classList.remove('hidden');
+                }
             } finally {
                 document.getElementById('loading-section').classList.add('hidden');
+                progressContainer.classList.remove('hidden');
+                navButtons.classList.remove('hidden');
             }
         });
+        
+        function validateFieldRanges() {
+            const warnings = [];
+            const formData = new FormData(form);
+            formData.forEach((value, key) => {
+                const field = allLabFields[key];
+                if (field && field.range && value.trim() !== '') {
+                    const numValue = parseFloat(value.replace(',', '.'));
+                    if (!isNaN(numValue)) {
+                        if (numValue < field.range.min || numValue > field.range.max) {
+                             const lang = document.documentElement.lang || 'pt-BR';
+                             const label = translations[lang][key].label;
+                             warnings.push(`- ${label}: ${value}`);
+                        }
+                    }
+                }
+            });
+            return warnings;
+        }
+
+        function generateOfflineReport(labData) {
+            const lang = document.documentElement.lang || 'pt-BR';
+            let reportHtml = `<div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-6" role="alert">
+                <p class="font-bold">Modo Offline</p>
+                <p>Não foi possível conectar à IA. Este é um relatório de triagem básico gerado localmente.</p>
+            </div>`;
+            
+            reportHtml += `<h2 class="text-2xl font-bold text-gray-800 mb-4">Triagem Rápida Offline</h2>`;
+            
+            let findings = '<ul>';
+            if (labData.hemoglobina && parseFloat(labData.hemoglobina.replace(',','.')) < 12) {
+                findings += '<li><strong>Hemoglobina Baixa:</strong> Sugere possível anemia.</li>';
+            }
+            if (labData.plaquetas && parseFloat(labData.plaquetas.replace(',','.')) < 150000) {
+                findings += '<li><strong>Plaquetas Baixas:</strong> Atenção para risco de sangramentos.</li>';
+            }
+            if (labData.leucocitos && parseFloat(labData.leucocitos.replace(',','.')) > 11000) {
+                findings += '<li><strong>Leucócitos Altos:</strong> Pode indicar uma infecção.</li>';
+            }
+            if (findings === '<ul>') {
+                findings += '<li>Nenhum alerta crítico nos exames básicos preenchidos.</li>';
+            }
+            findings += '</ul>';
+
+            reportHtml += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">${findings}</div>`;
+            reportHtml += `<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md"><h4 class="font-bold">Recomendação</h4><p>Avalie o quadro clínico do paciente. Se houver sinais de gravidade, encaminhe para avaliação médica presencial.</p></div>`;
+
+            const reportOutput = document.getElementById('report-output');
+            const t = translations[lang];
+            reportOutput.innerHTML = `
+                <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
+                <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
+                    <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
+                        ${t['report-pdf-btn']}
+                    </button>
+                    <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
+                    <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
+                </div>
+            `;
+            document.getElementById('generate-pdf-btn').addEventListener('click', () => generatePdf(reportHtml, labData['patient-name']));
+            document.getElementById('back-to-edit-btn').addEventListener('click', () => {
+                reportOutput.classList.add('hidden');
+                progressContainer.classList.remove('hidden');
+                navButtons.classList.remove('hidden');
+                showStep(4);
+            });
+            document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
+            reportOutput.classList.remove('hidden');
+            reportOutput.scrollIntoView({ behavior: 'smooth' });
+        }
         
         async function generatePdf(reportHtml, patientName) {
             const { jsPDF } = window.jspdf;
@@ -848,6 +934,11 @@
                 }
                 
                 pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`);
+                
+                showModal(`
+                    <h2 class="text-xl font-bold mb-2">PDF Gerado com Sucesso!</h2>
+                    <p class="text-sm"><strong>Aviso de Segurança:</strong> Lembre-se de não compartilhar arquivos com dados de pacientes em redes de Wi-Fi públicas ou inseguras.</p>
+                `);
 
             } catch (error) {
                 console.error("Erro ao gerar PDF:", error);
