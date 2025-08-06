@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-key="title">MISSIONLAB</title>
     
-    <!-- Metadados Essenciais para PWA -->
+    <!-- Metadados Essenciais para PWA (Progressive Web App) -->
+    <!-- A cor da barra de status do navegador em dispositivos móveis -->
     <meta name="theme-color" content="#1d4ed8"/>
+    <!-- O manifest.json descreve o aplicativo (nome, ícones, etc.) para que ele possa ser "instalado" -->
+    <!-- Verifique se o caminho para este arquivo está correto no seu servidor. -->
     <link rel="manifest" href="manifest.json">
+    <!-- Ícone para dispositivos Apple quando adicionado à tela inicial -->
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
     <!-- Scripts e Estilos -->
@@ -538,21 +542,21 @@
                 if (findings.length > 0) {
                     reportHtml += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
                         <h3 class="font-bold mb-2">Principais Achados:</h3>
-                        <ul>${findings.map(f => `<li>${f}</li>`).join('')}</ul>
+                        <ul>${findings.map(f => `<li>- ${f}</li>`).join('')}</ul>
                     </div>`;
                 } else {
                     reportHtml += `<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md mb-6">
-                        <p>Nenhum achado significativo detectado nos exames fornecidos.</p>
+                        <p>Nenhum achado significativo detectado nos exames fornecidos com base nas regras de triagem offline.</p>
                     </div>`;
                 }
                 
                 // Adicionar recomendações gerais
                 reportHtml += `<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md">
-                    <h3 class="font-bold mb-2">Recomendações:</h3>
-                    <ul>
-                        <li>Mantenha o paciente em observação</li>
-                        <li>Hidratação adequada</li>
-                        <li>Procure assistência médica se os sintomas piorarem</li>
+                    <h3 class="font-bold mb-2">Recomendações Gerais:</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Manter o paciente em observação.</li>
+                        <li>Garantir hidratação adequada.</li>
+                        <li>Procurar assistência médica se os sintomas piorarem ou não melhorarem.</li>
                     </ul>
                 </div>`;
                 
@@ -598,27 +602,16 @@
             }
         };
         
-        // Módulo de API (COM ALTERAÇÃO DE SEGURANÇA)
+        // Módulo de API (RESTAURADO CONFORME SOLICITADO)
         const ApiModule = {
             async generateContent(prompt) {
                 try {
-                    // ===================================================================
-                    // ALERTA DE SEGURANÇA CRÍTICO - NÃO EXPONHA SUA CHAVE DE API AQUI
-                    // ===================================================================
-                    // Sua chave de API foi removida para proteger sua conta e seu projeto.
-                    // Uma chave exposta no código do cliente (frontend) pode ser roubada
-                    // e usada por qualquer pessoa, gerando custos enormes.
-                    //
-                    // A SOLUÇÃO CORRETA:
-                    // 1. Crie um "backend" simples (ex: Google Cloud Function, Netlify Function).
-                    // 2. Armazene sua chave de API de forma segura nesse backend.
-                    // 3. Faça a chamada para o seu backend a partir daqui, e o backend
-                    //    fará a chamada segura para a API do Google.
-                    //
-                    // A linha abaixo foi mantida para evitar que o código quebre, mas
-                    // ela precisa ser substituída pela chamada ao seu backend.
-                    const apiKey = "SUA_CHAVE_DE_API_DEVE_FICAR_SEGURA_NO_BACKEND"; 
-                    // ===================================================================
+                    // INSTRUÇÃO: Cole sua chave de API do Google AI Studio aqui.
+                    const apiKey = "COLE_SUA_CHAVE_DE_API_AQUI"; 
+                    
+                    if (apiKey === "COLE_SUA_CHAVE_DE_API_AQUI") {
+                        throw new Error("Chave de API não foi inserida. A análise online não pode prosseguir.");
+                    }
 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
                     
@@ -628,13 +621,22 @@
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
                     
-                    if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
+                    if (!response.ok) {
+                        const errorBody = await response.text();
+                        console.error("Corpo do erro da API:", errorBody);
+                        throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
+                    }
                     
                     const result = await response.json();
+                    if (!result.candidates || !result.candidates[0] || !result.candidates[0].content || !result.candidates[0].content.parts[0] || !result.candidates[0].content.parts[0].text) {
+                        console.error("Resposta inesperada da API:", result);
+                        throw new Error("Formato de resposta da API inválido.");
+                    }
                     return result.candidates[0].content.parts[0].text;
+
                 } catch (error) {
-                    console.error("Falha na API:", error);
-                    throw error;
+                    console.error("Falha na chamada da API:", error);
+                    throw error; // Propaga o erro para ativar o modo offline
                 }
             }
         };
@@ -1093,6 +1095,7 @@
             document.getElementById('report-output').classList.add('hidden');
             document.getElementById('progress-container').classList.remove('hidden');
             document.getElementById('nav-buttons').classList.remove('hidden');
+            document.getElementById('lab-form').classList.remove('hidden');
             currentStep = 1;
             UIModule.showStep(currentStep);
             document.getElementById('fast-mode-btn').click();
@@ -1228,9 +1231,7 @@
         });
 
         async function proceedWithAnalysis() {
-            document.getElementById('progress-container').classList.add('hidden');
-            document.getElementById('nav-buttons').classList.add('hidden');
-            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+            document.getElementById('lab-form').classList.add('hidden');
             document.getElementById('loading-section').classList.remove('hidden');
             document.getElementById('report-output').classList.add('hidden');
             document.getElementById('error-message').classList.add('hidden');
@@ -1281,86 +1282,49 @@
                 * Texto do aviso: "LEMBRETE: Esta é uma análise de triagem baseada em IA e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo."
             `;
             
+            let reportHtml = '';
             try {
-                const reportHtml = await ApiModule.generateContent(promptText);
-                
-                const reportOutput = document.getElementById('report-output');
-                const lang = document.documentElement.lang || 'pt-BR';
-                const t = translations[lang];
-                
-                reportOutput.innerHTML = `
-                    <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
-                    <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
-                        <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
-                            </svg>
-                            ${t['report-pdf-btn']}
-                        </button>
-                        <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
-                        <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
-                    </div>
-                `;
-                
-                document.getElementById('generate-pdf-btn').addEventListener('click', () => {
-                    PDFModule.generatePdf(reportHtml, labData['patient-name']);
-                });
-                
-                document.getElementById('back-to-edit-btn').addEventListener('click', () => {
-                    reportOutput.classList.add('hidden');
-                    document.getElementById('progress-container').classList.remove('hidden');
-                    document.getElementById('nav-buttons').classList.remove('hidden');
-                    UIModule.showStep(4);
-                });
-                
-                document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
-                
-                reportOutput.classList.remove('hidden');
-                reportOutput.scrollIntoView({ behavior: 'smooth' });
+                // Tenta a análise online primeiro
+                reportHtml = await ApiModule.generateContent(promptText);
             } catch (error) {
-                console.error("Falha detalhada na análise:", error);
-                
-                // Modo offline é agora o comportamento padrão devido à remoção da chave de API do frontend
-                const reportHtml = OfflineModule.generateEnhancedOfflineReport(labData);
-                
-                const reportOutput = document.getElementById('report-output');
-                const lang = document.documentElement.lang || 'pt-BR';
-                const t = translations[lang];
-                
-                reportOutput.innerHTML = `
-                    <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
-                    <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
-                        <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
-                            </svg>
-                            ${t['report-pdf-btn']}
-                        </button>
-                        <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
-                        <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
-                    </div>
-                `;
-                
-                document.getElementById('generate-pdf-btn').addEventListener('click', () => {
-                    PDFModule.generatePdf(reportHtml, labData['patient-name']);
-                });
-                
-                document.getElementById('back-to-edit-btn').addEventListener('click', () => {
-                    reportOutput.classList.add('hidden');
-                    document.getElementById('progress-container').classList.remove('hidden');
-                    document.getElementById('nav-buttons').classList.remove('hidden');
-                    UIModule.showStep(4);
-                });
-                
-                document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
-                
-                reportOutput.classList.remove('hidden');
-                reportOutput.scrollIntoView({ behavior: 'smooth' });
-
+                // Se a análise online falhar (sem internet, chave inválida, etc.), usa o modo offline
+                console.warn("Análise online falhou. Usando fallback para modo offline.", error);
+                reportHtml = OfflineModule.generateEnhancedOfflineReport(labData);
             } finally {
                 document.getElementById('loading-section').classList.add('hidden');
-                document.getElementById('progress-container').classList.remove('hidden');
-                document.getElementById('nav-buttons').classList.remove('hidden');
+                
+                const reportOutput = document.getElementById('report-output');
+                const lang = document.documentElement.lang || 'pt-BR';
+                const t = translations[lang];
+                
+                reportOutput.innerHTML = `
+                    <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
+                    <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
+                        <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            ${t['report-pdf-btn']}
+                        </button>
+                        <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
+                        <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
+                    </div>
+                `;
+                
+                document.getElementById('generate-pdf-btn').addEventListener('click', () => {
+                    PDFModule.generatePdf(reportHtml, labData['patient-name']);
+                });
+                
+                document.getElementById('back-to-edit-btn').addEventListener('click', () => {
+                    reportOutput.classList.add('hidden');
+                    document.getElementById('lab-form').classList.remove('hidden');
+                    UIModule.showStep(4);
+                });
+                
+                document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
+                
+                reportOutput.classList.remove('hidden');
+                reportOutput.scrollIntoView({ behavior: 'smooth' });
             }
         }
         
@@ -1421,12 +1385,13 @@
         // Verificar suporte a Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js') // Alterado para caminho relativo
+                // O caminho './service-worker.js' deve estar correto em relação ao index.html
+                navigator.serviceWorker.register('./service-worker.js')
                     .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                        console.log('ServiceWorker registrado com sucesso. Escopo: ', registration.scope);
                     })
                     .catch(error => {
-                        console.log('ServiceWorker registration failed: ', error);
+                        console.log('Falha no registro do ServiceWorker: ', error);
                     });
             });
         }
