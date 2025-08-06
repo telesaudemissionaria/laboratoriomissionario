@@ -32,50 +32,67 @@
         .progress-bar-fill { transition: width 0.3s ease-in-out; }
         .required-label::after { content: ' *'; color: #ef4444; }
         .modal-overlay { background-color: rgba(0, 0, 0, 0.75); }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
-
-    <!-- Modal Genérico para Ajuda e Termos Legais -->
-    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
-            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <div id="modal-content"></div>
-        </div>
+    <!-- Indicador de status de conexão -->
+    <div id="connection-status" class="fixed top-4 right-4 px-3 py-1 rounded-full text-xs font-medium hidden z-50">
+        <span id="status-text"></span>
     </div>
 
+    <!-- Modal Genérico para Ajuda e Termos Legais -->
+    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800" aria-label="Fechar modal">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div id="modal-content">
+                <h2 id="modal-title" class="sr-only">Conteúdo do Modal</h2>
+            </div>
+        </div>
+    </div>
+    
     <!-- Botão de Ajuda Fixo -->
-    <button id="help-btn" class="fixed bottom-4 right-4 bg-yellow-500 text-white p-4 rounded-full shadow-lg z-40 flex items-center justify-center">
+    <button id="help-btn" class="fixed bottom-4 right-4 bg-yellow-500 text-white p-4 rounded-full shadow-lg z-40 flex items-center justify-center" aria-label="Ajuda">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4 0 1.105-.448 2.105-1.172 2.828l-1.036 1.036c-.3.3-.608.668-.928 1.036-1.036 1.22-2.33 2.344-2.33 4.5V19m0-2.5h.01"></path></svg>
     </button>
-
+    
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
         <header class="text-center mb-8">
             <div class="flex justify-center items-center mb-4 gap-4">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900" data-key="header-title">MISSIONLAB ⚕️</h1>
                 <div class="lang-switcher flex gap-2">
-                    <button data-lang="pt-BR" title="Português (Brasil)"><img src="https://flagcdn.com/br.svg" alt="Bandeira do Brasil" class="w-8 h-auto"></button>
-                    <button data-lang="es" title="Español"><img src="https://flagcdn.com/es.svg" alt="Bandeira da Espanha" class="w-8 h-auto"></button>
-                    <button data-lang="en" title="English"><img src="https://flagcdn.com/us.svg" alt="Bandeira dos EUA" class="w-8 h-auto"></button>
+                    <button data-lang="pt-BR" title="Português (Brasil)" aria-label="Português (Brasil)"><img src="https://flagcdn.com/br.svg" alt="Bandeira do Brasil" class="w-8 h-auto"></button>
+                    <button data-lang="es" title="Español" aria-label="Español"><img src="https://flagcdn.com/es.svg" alt="Bandeira da Espanha" class="w-8 h-auto"></button>
+                    <button data-lang="en" title="English" aria-label="English"><img src="https://flagcdn.com/us.svg" alt="Bandeira dos EUA" class="w-8 h-auto"></button>
                 </div>
             </div>
             <p class="text-md text-gray-600 mt-2" data-key="header-subtitle">Ferramenta de apoio para triagem e análise de exames em campo.</p>
         </header>
-
+        
         <main>
             <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                 <!-- Barra de Progresso -->
                 <div id="progress-container" class="mb-8">
                     <h3 class="text-lg font-semibold text-center mb-2" data-key="progress-title">Progresso</h3>
                     <div class="bg-gray-200 rounded-full h-4">
-                        <div id="progress-bar" class="progress-bar-fill bg-blue-600 h-4 rounded-full" style="width: 25%;"></div>
+                        <div id="progress-bar" class="progress-bar-fill bg-blue-600 h-4 rounded-full" style="width: 25%;" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <p id="progress-text" class="text-center text-sm mt-2 text-gray-600" data-key="progress-step-1">Passo 1 de 4: Dados do Paciente</p>
                 </div>
-
-                <form id="lab-form">
+                
+                <form id="lab-form" role="form" aria-label="Formulário de dados do paciente">
                     <!-- Passo 1: Dados do Paciente -->
                     <div id="step-1" class="wizard-step active">
                         <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step1-title">
@@ -86,8 +103,8 @@
                             <div>
                                 <label for="patient-name" class="block text-sm font-medium required-label" data-key="patient-name-label">Nome do Paciente</label>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <input type="text" id="patient-name" name="patient-name" class="w-full rounded-md p-2 border-gray-300" required>
-                                    <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-patient-name" data-text="Digite o nome completo do paciente.">
+                                    <input type="text" id="patient-name" name="patient-name" class="w-full rounded-md p-2 border-gray-300" required aria-required="true">
+                                    <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-patient-name" data-text="Digite o nome completo do paciente." aria-label="Ouvir instrução">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
                                     </button>
                                 </div>
@@ -95,8 +112,8 @@
                             <div>
                                 <label for="patient-age" class="block text-sm font-medium required-label" data-key="patient-age-label">Idade (em anos)</label>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <input type="number" id="patient-age" name="patient-age" class="w-full rounded-md p-2 border-gray-300" required>
-                                    <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-patient-age" data-text="Digite a idade do paciente em anos.">
+                                    <input type="number" id="patient-age" name="patient-age" class="w-full rounded-md p-2 border-gray-300" required aria-required="true" min="0" max="150">
+                                    <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-patient-age" data-text="Digite a idade do paciente em anos." aria-label="Ouvir instrução">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
                                     </button>
                                 </div>
@@ -109,13 +126,13 @@
                                 <h2 class="font-bold text-yellow-800 mb-2" data-key="consent-title">Termo de Consentimento</h2>
                                 <p data-key="consent-text">Declaro que as informações inseridas são para apoio à triagem e não substituem uma consulta médica. Os dados serão armazenados de forma segura apenas no seu dispositivo.</p>
                                 <div class="mt-3">
-                                    <input type="checkbox" id="consent-check" name="consent-check" class="h-4 w-4 rounded" required>
+                                    <input type="checkbox" id="consent-check" name="consent-check" class="h-4 w-4 rounded" required aria-required="true">
                                     <label for="consent-check" class="ml-2 font-medium required-label" data-key="consent-agree">Li e Concordo</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Passo 2: Exames -->
                     <div id="step-2" class="wizard-step">
                         <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step2-title">
@@ -143,14 +160,14 @@
                         <div>
                             <label for="outros_dados" class="block text-sm font-medium required-label" data-key="clinical-history-label">Descreva o que o paciente está sentindo</label>
                             <div class="flex items-start gap-2 mt-1">
-                                <textarea id="outros_dados" name="outros_dados" rows="8" class="w-full rounded-md p-2 border-gray-300" data-key="clinical-history-placeholder" placeholder="Ex: Febre há 3 dias, dor de cabeça, sem apetite..." required></textarea>
-                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-clinical-history" data-text="Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes.">
+                                <textarea id="outros_dados" name="outros_dados" rows="8" class="w-full rounded-md p-2 border-gray-300" data-key="clinical-history-placeholder" placeholder="Ex: Febre há 3 dias, dor de cabeça, sem apetite..." required aria-required="true"></textarea>
+                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-clinical-history" data-text="Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes." aria-label="Ouvir instrução">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
                                 </button>
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Passo 4: Revisão e Análise -->
                     <div id="step-4" class="wizard-step">
                         <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step4-title">
@@ -158,7 +175,7 @@
                             Revisão e Análise
                         </h2>
                         <p class="mb-4" data-key="review-text">Por favor, revise os dados inseridos antes de enviar para análise.</p>
-                        <div id="review-content" class="space-y-4 bg-gray-50 p-4 rounded-lg border max-h-96 overflow-y-auto">
+                        <div id="review-content" class="space-y-4 bg-gray-50 p-4 rounded-lg border max-h-96 overflow-y-auto" role="region" aria-label="Resumo dos dados do paciente">
                             <!-- Conteúdo da revisão será inserido aqui -->
                         </div>
                         <div class="mt-8">
@@ -167,7 +184,7 @@
                             </button>
                         </div>
                     </div>
-
+                    
                     <!-- Botões de Navegação -->
                     <div id="nav-buttons" class="mt-8 pt-6 border-t flex justify-between items-center">
                         <button type="button" id="prev-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg py-2 px-6" data-key="prev-btn">Voltar</button>
@@ -175,16 +192,18 @@
                     </div>
                 </form>
             </div>
-
+            
             <!-- Seções de Resultado -->
-            <div id="loading-section" class="text-center my-10 hidden">
+            <div id="loading-section" class="text-center my-10 hidden" aria-live="polite">
                 <div class="loader ease-linear rounded-full border-8 border-t-8 h-24 w-24 mx-auto"></div>
                 <p class="mt-4 text-lg" data-key="loading-text">Analisando dados... Por favor, aguarde.</p>
             </div>
-            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg my-6"></div>
+            
+            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg my-6" role="alert"></div>
+            
             <div id="report-output" class="mt-10 hidden"></div>
         </main>
-
+        
         <footer class="text-center mt-12 text-sm text-gray-500">
             <p data-key="footer-copyright">&copy; 2024 MISSIONLAB.</p>
             <div class="mt-2">
@@ -196,26 +215,480 @@
     </div>
 
     <script type="module">
-        // --- LIBS ---
-        const { jsPDF } = window.jspdf;
-
-        // --- STATE & DOM ELEMENTS ---
+        // --- MÓDULOS DE FUNCIONALIDADE ---
+        
+        // Módulo de Criptografia
+        const CryptoModule = {
+            async encryptData(data, password) {
+                try {
+                    const encoder = new TextEncoder();
+                    const dataBuffer = encoder.encode(JSON.stringify(data));
+                    const passwordBuffer = encoder.encode(password);
+                    
+                    const importedKey = await crypto.subtle.importKey(
+                        'raw',
+                        passwordBuffer,
+                        { name: 'PBKDF2' },
+                        false,
+                        ['deriveKey']
+                    );
+                    
+                    const salt = crypto.getRandomValues(new Uint8Array(16));
+                    const derivedKey = await crypto.subtle.deriveKey(
+                        {
+                            name: 'PBKDF2',
+                            salt: salt,
+                            iterations: 100000,
+                            hash: 'SHA-256'
+                        },
+                        importedKey,
+                        { name: 'AES-GCM', length: 256 },
+                        false,
+                        ['encrypt']
+                    );
+                    
+                    const iv = crypto.getRandomValues(new Uint8Array(12));
+                    const encryptedData = await crypto.subtle.encrypt(
+                        { name: 'AES-GCM', iv: iv },
+                        derivedKey,
+                        dataBuffer
+                    );
+                    
+                    return {
+                        encryptedData: Array.from(new Uint8Array(encryptedData)),
+                        iv: Array.from(iv),
+                        salt: Array.from(salt)
+                    };
+                } catch (error) {
+                    console.error("Erro na criptografia:", error);
+                    return null;
+                }
+            },
+            
+            async decryptData(encryptedData, password, iv, salt) {
+                try {
+                    const encoder = new TextEncoder();
+                    const passwordBuffer = encoder.encode(password);
+                    
+                    const importedKey = await crypto.subtle.importKey(
+                        'raw',
+                        passwordBuffer,
+                        { name: 'PBKDF2' },
+                        false,
+                        ['deriveKey']
+                    );
+                    
+                    const derivedKey = await crypto.subtle.deriveKey(
+                        {
+                            name: 'PBKDF2',
+                            salt: new Uint8Array(salt),
+                            iterations: 100000,
+                            hash: 'SHA-256'
+                        },
+                        importedKey,
+                        { name: 'AES-GCM', length: 256 },
+                        false,
+                        ['decrypt']
+                    );
+                    
+                    const decryptedData = await crypto.subtle.decrypt(
+                        { name: 'AES-GCM', iv: new Uint8Array(iv) },
+                        derivedKey,
+                        new Uint8Array(encryptedData)
+                    );
+                    
+                    const decoder = new TextDecoder();
+                    return JSON.parse(decoder.decode(decryptedData));
+                } catch (error) {
+                    console.error("Erro na descriptografia:", error);
+                    return null;
+                }
+            }
+        };
+        
+        // Módulo de Validação
+        const ValidationModule = {
+            validateStep(step) {
+                const inputs = document.querySelectorAll(`#step-${step} [required]`);
+                for (let input of inputs) {
+                    if ((input.type === 'checkbox' && !input.checked) || 
+                        (input.type !== 'checkbox' && !input.value.trim())) {
+                        const fieldName = input.labels[0].textContent.replace(' *', '');
+                        this.showValidationError(`Por favor, preencha o campo obrigatório: "${fieldName}".`);
+                        input.focus();
+                        return false;
+                    }
+                }
+                return true;
+            },
+            
+            validateFieldRanges() {
+                const warnings = [];
+                const formData = new FormData(form);
+                
+                formData.forEach((value, key) => {
+                    const field = allLabFields[key];
+                    if (field && field.range && value.trim() !== '') {
+                        const numValue = parseFloat(value.replace(',', '.'));
+                        if (!isNaN(numValue)) {
+                            if (numValue < field.range.min || numValue > field.range.max) {
+                                const lang = document.documentElement.lang || 'pt-BR';
+                                const label = translations[lang][key].label;
+                                warnings.push(`- ${label}: ${value}`);
+                            }
+                        }
+                    }
+                });
+                
+                return warnings;
+            },
+            
+            validateLabData(data) {
+                const errors = [];
+                
+                // Validar idade
+                if (data['patient-age'] && (isNaN(data['patient-age']) || data['patient-age'] <= 0)) {
+                    errors.push("Idade deve ser um número positivo");
+                }
+                
+                // Validar valores numéricos dos exames
+                for (const [key, value] of Object.entries(data)) {
+                    if (allLabFields[key] && value) {
+                        const numValue = parseFloat(value.replace(',', '.'));
+                        if (isNaN(numValue)) {
+                            errors.push(`${key} deve ser um número válido`);
+                        }
+                    }
+                }
+                
+                return errors;
+            },
+            
+            showValidationError(message) {
+                const errorElement = document.getElementById('error-message');
+                errorElement.textContent = message;
+                errorElement.classList.remove('hidden');
+                
+                // Remover mensagem após 5 segundos
+                setTimeout(() => {
+                    errorElement.classList.add('hidden');
+                }, 5000);
+            }
+        };
+        
+        // Módulo de UI
+        const UIModule = {
+            updateConnectionStatus() {
+                const statusElement = document.getElementById('connection-status');
+                const statusText = document.getElementById('status-text');
+                
+                if (navigator.onLine) {
+                    statusElement.className = 'fixed top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800';
+                    statusText.textContent = 'Online';
+                } else {
+                    statusElement.className = 'fixed top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800';
+                    statusText.textContent = 'Offline';
+                }
+                
+                statusElement.classList.remove('hidden');
+                
+                // Ocultar após 3 segundos
+                setTimeout(() => {
+                    statusElement.classList.add('hidden');
+                }, 3000);
+            },
+            
+            showStep(step) {
+                document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+                document.getElementById(`step-${step}`).classList.add('active');
+                
+                const progressBar = document.getElementById('progress-bar');
+                progressBar.style.width = `${(step / totalSteps) * 100}%`;
+                progressBar.setAttribute('aria-valuenow', (step / totalSteps) * 100);
+                
+                const progressText = document.getElementById('progress-text');
+                const lang = document.documentElement.lang || 'pt-BR';
+                progressText.dataset.key = `progress-step-${step}`;
+                progressText.textContent = translations[lang][`progress-step-${step}`];
+                
+                prevBtn.style.display = step === 1 ? 'none' : 'inline-block';
+                nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block';
+                
+                if (step === totalSteps) {
+                    this.updateReviewContent();
+                }
+            },
+            
+            updateReviewContent() {
+                const reviewContent = document.getElementById('review-content');
+                const formData = new FormData(form);
+                let html = '<ul>';
+                
+                formData.forEach((value, key) => {
+                    const el = form.elements[key];
+                    if (value && el && el.labels) {
+                        const label = el.labels[0] ? el.labels[0].textContent.replace(' *', '') : key;
+                        if(key !== 'consent-check') {
+                            html += `<li class="py-1"><strong class="font-semibold">${label}:</strong> ${value}</li>`;
+                        }
+                    }
+                });
+                
+                html += `<li><strong class="font-semibold">Paciente Pediátrico:</strong> ${document.getElementById('is-pediatric').checked ? 'Sim' : 'Não'}</li>`;
+                html += '</ul>';
+                reviewContent.innerHTML = html;
+            },
+            
+            showModal(content, title = "Informação") {
+                const modal = document.getElementById('modal');
+                const modalContent = document.getElementById('modal-content');
+                const modalTitle = document.getElementById('modal-title');
+                
+                modalTitle.textContent = title;
+                modalContent.innerHTML = content;
+                modal.classList.remove('hidden');
+                
+                // Foco no modal para acessibilidade
+                const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (focusableElements.length > 0) {
+                    focusableElements[0].focus();
+                }
+            },
+            
+            hideModal() {
+                const modal = document.getElementById('modal');
+                modal.classList.add('hidden');
+            }
+        };
+        
+        // Módulo Offline
+        const OfflineModule = {
+            offlineRules: {
+                anemia: {
+                    condition: (data) => {
+                        const hemo = parseFloat(data.hemoglobina?.replace(',', '.'));
+                        const age = parseInt(data['patient-age']);
+                        
+                        if (!hemo || !age) return false;
+                        
+                        // Valores de referência por idade
+                        if (age < 12) {
+                            return hemo < 11.5; // Crianças
+                        } else if (age < 50) {
+                            return hemo < 12; // Adultos
+                        } else {
+                            return hemo < 12; // Idosos
+                        }
+                    },
+                    message: "Possível anemia detectada. Recomenda-se avaliação complementar."
+                },
+                infection: {
+                    condition: (data) => {
+                        const leuko = parseFloat(data.leucocitos?.replace(',', '.'));
+                        return leuko && leuko > 11000;
+                    },
+                    message: "Leucocitose detectada. Pode indicar processo infeccioso."
+                },
+                thrombocytopenia: {
+                    condition: (data) => {
+                        const plaquetas = parseFloat(data.plaquetas?.replace(',', '.'));
+                        return plaquetas && plaquetas < 150000;
+                    },
+                    message: "Trombocitopenia detectada. Atenção para risco de sangramentos."
+                },
+                hyperglycemia: {
+                    condition: (data) => {
+                        const glicose = parseFloat(data.glicose?.replace(',', '.'));
+                        return glicose && glicose > 126;
+                    },
+                    message: "Hiperglicemia detectada. Possível diabetes."
+                },
+                renalImpairment: {
+                    condition: (data) => {
+                        const creatinina = parseFloat(data.creatinina?.replace(',', '.'));
+                        return creatinina && creatinina > 1.2;
+                    },
+                    message: "Creatinina elevada. Possível comprometimento renal."
+                }
+            },
+            
+            generateEnhancedOfflineReport(labData) {
+                const findings = [];
+                
+                // Avaliar todas as regras
+                for (const [conditionName, rule] of Object.entries(this.offlineRules)) {
+                    if (rule.condition(labData)) {
+                        findings.push(rule.message);
+                    }
+                }
+                
+                // Gerar relatório com base nas descobertas
+                let reportHtml = `<div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-6" role="alert">
+                    <p class="font-bold">Modo Offline</p>
+                    <p>Não foi possível conectar à IA. Este é um relatório de triagem básico gerado localmente.</p>
+                </div>`;
+                
+                reportHtml += `<h2 class="text-2xl font-bold text-gray-800 mb-4">Análise Offline</h2>`;
+                
+                if (findings.length > 0) {
+                    reportHtml += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
+                        <h3 class="font-bold mb-2">Principais Achados:</h3>
+                        <ul>${findings.map(f => `<li>${f}</li>`).join('')}</ul>
+                    </div>`;
+                } else {
+                    reportHtml += `<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md mb-6">
+                        <p>Nenhum achado significativo detectado nos exames fornecidos.</p>
+                    </div>`;
+                }
+                
+                // Adicionar recomendações gerais
+                reportHtml += `<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md">
+                    <h3 class="font-bold mb-2">Recomendações:</h3>
+                    <ul>
+                        <li>Mantenha o paciente em observação</li>
+                        <li>Hidratação adequada</li>
+                        <li>Procure assistência médica se os sintomas piorarem</li>
+                    </ul>
+                </div>`;
+                
+                // Adicionar aviso legal
+                reportHtml += `<p class="text-xs text-gray-500 mt-6">LEMBRETE: Esta é uma análise de triagem baseada em regras pré-definidas e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo.</p>`;
+                
+                return reportHtml;
+            }
+        };
+        
+        // Módulo de Armazenamento
+        const StorageModule = {
+            async saveEncryptedData(key, data, password) {
+                try {
+                    const encrypted = await CryptoModule.encryptData(data, password);
+                    if (encrypted) {
+                        localStorage.setItem(key, JSON.stringify(encrypted));
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error("Erro ao salvar dados criptografados:", error);
+                    return false;
+                }
+            },
+            
+            async loadEncryptedData(key, password) {
+                try {
+                    const encryptedStr = localStorage.getItem(key);
+                    if (!encryptedStr) return null;
+                    
+                    const encrypted = JSON.parse(encryptedStr);
+                    return await CryptoModule.decryptData(
+                        encrypted.encryptedData, 
+                        password, 
+                        encrypted.iv, 
+                        encrypted.salt
+                    );
+                } catch (error) {
+                    console.error("Erro ao carregar dados criptografados:", error);
+                    return null;
+                }
+            }
+        };
+        
+        // Módulo de API
+        const ApiModule = {
+            async generateContent(prompt) {
+                // REMOVED API KEY FROM FRONTEND
+                // This function should now call a secure backend endpoint (e.g., a Cloud Function)
+                // For demonstration, we'll simulate a failure that triggers offline mode.
+                console.log("Attempting to call backend for AI analysis...");
+                throw new Error("Failed to fetch. API calls must be made from a secure backend.");
+            }
+        };
+        
+        // Módulo de PDF
+        const PDFModule = {
+            async generatePdf(reportHtml, patientName) {
+                const { jsPDF } = window.jspdf;
+                const reportElement = document.getElementById('report-content-for-pdf');
+                
+                try {
+                    const canvas = await html2canvas(reportElement, {
+                        scale: 2,
+                        useCORS: true,
+                        windowWidth: reportElement.scrollWidth,
+                        windowHeight: reportElement.scrollHeight
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 210; // A4 width in mm
+                    const pageHeight = 295; // A4 height in mm
+                    const imgHeight = canvas.height * imgWidth / canvas.width;
+                    let heightLeft = imgHeight;
+                    
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    let position = 0;
+                    
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                    
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+                    
+                    pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`);
+                    
+                    UIModule.showModal(`
+                        <h2 class="text-xl font-bold mb-2">PDF Gerado com Sucesso!</h2>
+                        <p class="text-sm"><strong>Aviso de Segurança:</strong> Lembre-se de não compartilhar arquivos com dados de pacientes em redes de Wi-Fi públicas ou inseguras.</p>
+                    `);
+                } catch (error) {
+                    console.error("Erro ao gerar PDF:", error);
+                    UIModule.showModal(`
+                        <h2 class="text-xl font-bold mb-2 text-red-600">Erro ao Gerar PDF</h2>
+                        <p>Não foi possível gerar o PDF. Tente novamente mais tarde.</p>
+                    `);
+                }
+            }
+        };
+        
+        // Módulo de Internacionalização
+        const I18nModule = {
+            setLanguage(lang) {
+                document.documentElement.lang = lang;
+                localStorage.setItem('preferredLanguage', lang);
+                const t = translations[lang] || translations['pt-BR'];
+                
+                document.querySelectorAll('[data-key]').forEach(el => {
+                    const key = el.getAttribute('data-key');
+                    if (t[key]) {
+                        if (el.tagName === 'TEXTAREA' && el.hasAttribute('placeholder')) {
+                            el.placeholder = t[key];
+                        } else if(el.hasAttribute('data-text')) {
+                            el.dataset.text = t[key];
+                        } else {
+                            el.innerHTML = t[key];
+                        }
+                    }
+                });
+                
+                // Re-renderizar campos de exames com o novo idioma
+                renderLabFields(document.querySelector('#fast-mode-btn').classList.contains('border-blue-600'));
+            }
+        };
+        
+        // --- VARIÁVEIS GLOBAIS ---
         let currentStep = 1;
         const totalSteps = 4;
         const form = document.getElementById('lab-form');
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        const progressContainer = document.getElementById('progress-container');
-        const navButtons = document.getElementById('nav-buttons');
         const nextBtn = document.getElementById('next-btn');
         const prevBtn = document.getElementById('prev-btn');
-        const modal = document.getElementById('modal');
-        const modalContent = document.getElementById('modal-content');
         const closeModalBtn = document.getElementById('close-modal-btn');
         const installBtn = document.getElementById('install-app-btn');
         let deferredPrompt;
-
-        // --- DATA ---
+        
+        // --- DADOS ---
         const allLabFields = {
             // Triagem Rápida
             "hemoglobina": { group: "Série Vermelha", quick: true, range: { min: 1, max: 25 } },
@@ -247,7 +720,7 @@
             "esquistossomose_ovos": { group: "Parasitologia", quick: false },
             "helmintiases_fezes": { group: "Parasitologia", quick: false },
         };
-
+        
         const translations = {
             'pt-BR': {
                 'title': 'MISSIONLAB',
@@ -481,60 +954,16 @@
                 "helmintiases_fezes": { "label": "Helminthiasis (Stool)", "explanation": "Searches for eggs and parasites of intestinal worms." },
             },
         };
-
-        // --- WIZARD NAVIGATION ---
-        function showStep(step) {
-            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
-            document.getElementById(`step-${step}`).classList.add('active');
-            
-            progressBar.style.width = `${(step / totalSteps) * 100}%`;
-            const lang = document.documentElement.lang || 'pt-BR';
-            progressText.dataset.key = `progress-step-${step}`;
-            progressText.textContent = translations[lang][`progress-step-${step}`];
-
-            prevBtn.style.display = step === 1 ? 'none' : 'inline-block';
-            nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block';
-            
-            if (step === totalSteps) {
-                updateReviewContent();
-            }
-        }
-
-        function validateStep(step) {
-            const inputs = document.querySelectorAll(`#step-${step} [required]`);
-            for (let input of inputs) {
-                if ((input.type === 'checkbox' && !input.checked) || (input.type !== 'checkbox' && !input.value.trim())) {
-                    alert(`Por favor, preencha o campo obrigatório: "${input.labels[0].textContent.replace(' *','')}."`);
-                    input.focus();
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        nextBtn.addEventListener('click', () => {
-            if (validateStep(currentStep)) {
-                if (currentStep < totalSteps) {
-                    currentStep++;
-                    showStep(currentStep);
-                }
-            }
-        });
-
-        prevBtn.addEventListener('click', () => {
-            if (currentStep > 1) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        });
-
-        // --- LAB FIELDS MODE ---
+        
+        // --- FUNÇÕES PRINCIPAIS ---
+        
+        // Renderizar campos de exames
         function renderLabFields(isQuickMode) {
             const container = document.getElementById('lab-fields-container');
             container.innerHTML = '';
             const groups = {};
             const lang = document.documentElement.lang || 'pt-BR';
-
+            
             Object.entries(allLabFields).forEach(([key, data]) => {
                 if (!isQuickMode || data.quick) {
                     if (!groups[data.group]) {
@@ -543,73 +972,61 @@
                     groups[data.group].push({ key, ...data });
                 }
             });
-
+            
             for (const groupName in groups) {
                 const groupContainer = document.createElement('div');
                 groupContainer.className = 'space-y-4 bg-gray-100 p-4 rounded-lg border';
                 
                 const groupTitle = document.createElement('h3');
                 groupTitle.className = 'text-lg font-semibold text-gray-700';
-                groupTitle.textContent = groupName; // This could be translated too if needed
+                groupTitle.textContent = groupName;
                 groupContainer.appendChild(groupTitle);
-
+                
                 groups[groupName].forEach(field => {
-                    const fieldTranslations = translations[lang][field.key] || { label: field.key, explanation: "No description available." };
+                    const fieldTranslations = translations[lang][field.key] || { 
+                        label: field.key, 
+                        explanation: "No description available." 
+                    };
+                    
                     const fieldHTML = `
                         <div>
                             <label for="${field.key}" class="flex items-center text-sm font-medium">
                                 ${fieldTranslations.label}
-                                <button type="button" class="info-btn ml-2 text-gray-400 hover:text-blue-600" data-title="${fieldTranslations.label}" data-explanation="${fieldTranslations.explanation}">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                <button type="button" class="info-btn ml-2 text-gray-400 hover:text-blue-600" 
+                                    data-title="${fieldTranslations.label}" 
+                                    data-explanation="${fieldTranslations.explanation}"
+                                    aria-label="Informações sobre ${fieldTranslations.label}">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
                                 </button>
                             </label>
                             <div class="flex items-center gap-2 mt-1">
-                                <input type="text" id="${field.key}" name="${field.key}" class="w-full rounded-md p-2 border-gray-300">
-                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-text="Digite o valor para ${fieldTranslations.label}. Se não souber, pode deixar em branco.">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                <input type="text" id="${field.key}" name="${field.key}" 
+                                    class="w-full rounded-md p-2 border-gray-300"
+                                    aria-label="Valor para ${fieldTranslations.label}">
+                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" 
+                                    data-text="Digite o valor para ${fieldTranslations.label}. Se não souber, pode deixar em branco."
+                                    aria-label="Ouvir instrução">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                                    </svg>
                                 </button>
                             </div>
                         </div>`;
+                    
                     groupContainer.insertAdjacentHTML('beforeend', fieldHTML);
                 });
+                
                 container.appendChild(groupContainer);
             }
+            
             addSpeakButtonListeners();
             addInfoButtonListeners();
         }
-
-
-        document.getElementById('fast-mode-btn').addEventListener('click', (e) => {
-            renderLabFields(true);
-            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
-            document.getElementById('full-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
-        });
-        document.getElementById('full-mode-btn').addEventListener('click', (e) => {
-            renderLabFields(false);
-            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
-            document.getElementById('fast-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
-        });
-
-        // --- REVIEW STEP ---
-        function updateReviewContent() {
-            const reviewContent = document.getElementById('review-content');
-            const formData = new FormData(form);
-            let html = '<ul>';
-            formData.forEach((value, key) => {
-                const el = form.elements[key];
-                if (value && el && el.labels) {
-                     const label = el.labels[0] ? el.labels[0].textContent.replace(' *', '') : key;
-                     if(key !== 'consent-check'){
-                        html += `<li class="py-1"><strong class="font-semibold">${label}:</strong> ${value}</li>`;
-                     }
-                }
-            });
-             html += `<li><strong class="font-semibold">Paciente Pediátrico:</strong> ${document.getElementById('is-pediatric').checked ? 'Sim' : 'Não'}</li>`;
-            html += '</ul>';
-            reviewContent.innerHTML = html;
-        }
-
-        // --- ACCESSIBILITY (TEXT-TO-SPEECH & INFO) ---
+        
+        // Adicionar listeners para botões de fala
         function addSpeakButtonListeners() {
             document.querySelectorAll('.speak-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -621,31 +1038,74 @@
             });
         }
         
+        // Adicionar listeners para botões de informação
         function addInfoButtonListeners() {
             document.querySelectorAll('.info-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const title = btn.dataset.title;
                     const explanation = btn.dataset.explanation;
-                    showModal(`
+                    UIModule.showModal(`
                         <h2 class="text-xl font-bold mb-2">${title}</h2>
                         <p>${explanation}</p>
-                    `);
+                    `, title);
                 });
             });
         }
-
-        // --- MODAL & LEGAL ---
-        function showModal(content) {
-            modalContent.innerHTML = content;
-            modal.classList.remove('hidden');
+        
+        // Resetar aplicativo
+        function resetApp() {
+            form.reset();
+            document.getElementById('report-output').classList.add('hidden');
+            document.getElementById('progress-container').classList.remove('hidden');
+            document.getElementById('nav-buttons').classList.remove('hidden');
+            currentStep = 1;
+            UIModule.showStep(currentStep);
+            document.getElementById('fast-mode-btn').click();
         }
-        closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
-        modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.add('hidden'); });
-
+        
+        // --- EVENT LISTENERS ---
+        
+        // Navegação do wizard
+        nextBtn.addEventListener('click', () => {
+            if (ValidationModule.validateStep(currentStep)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    UIModule.showStep(currentStep);
+                }
+            }
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                UIModule.showStep(currentStep);
+            }
+        });
+        
+        // Modo de preenchimento de exames
+        document.getElementById('fast-mode-btn').addEventListener('click', (e) => {
+            renderLabFields(true);
+            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
+            document.getElementById('full-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
+        });
+        
+        document.getElementById('full-mode-btn').addEventListener('click', (e) => {
+            renderLabFields(false);
+            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
+            document.getElementById('fast-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
+        });
+        
+        // Modal
+        closeModalBtn.addEventListener('click', () => UIModule.hideModal());
+        document.getElementById('modal').addEventListener('click', (e) => { 
+            if(e.target === e.currentTarget) UIModule.hideModal(); 
+        });
+        
+        // Ajuda
         document.getElementById('help-btn').addEventListener('click', () => {
             const lang = document.documentElement.lang || 'pt-BR';
             const t = translations[lang];
-            showModal(`
+            UIModule.showModal(`
                 <h2 class="text-2xl font-bold mb-4">${t['help-title']}</h2>
                 <p class="mb-2">${t['help-step1']}</p>
                 <p class="mb-2">${t['help-step2']}</p>
@@ -655,14 +1115,23 @@
                     <h3 class="font-bold text-yellow-800">${t['help-alert-title']}</h3>
                     <p class="text-sm">${t['help-alert-text']}</p>
                 </div>
-            `);
+                <div class="mt-4">
+                    <h3 class="font-bold mb-2">Atalhos de Teclado:</h3>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Alt + N:</strong> Próximo passo</li>
+                        <li><strong>Alt + P:</strong> Passo anterior</li>
+                        <li><strong>Alt + H:</strong> Ajuda</li>
+                    </ul>
+                </div>
+            `, t['help-title']);
         });
-
+        
+        // Termos e privacidade
         document.getElementById('terms-link').addEventListener('click', (e) => {
             e.preventDefault();
             const lang = document.documentElement.lang || 'pt-BR';
             const t = translations[lang];
-            showModal(`
+            UIModule.showModal(`
                 <h2 class="font-bold text-lg text-yellow-700 mb-2">${t['terms-title']}</h2>
                 <p class="text-sm text-gray-700 mb-2"><strong>Esta ferramenta não substitui uma consulta médica presencial.</strong> Os resultados destinam-se ao apoio em triagem.</p>
                 <ul class="list-disc pl-5 text-sm text-gray-700">
@@ -671,65 +1140,81 @@
                     <li>Os dados nunca serão compartilhados com terceiros.</li>
                     <li>Em urgências, procure atendimento presencial.</li>
                 </ul>
-            `);
+            `, t['terms-title']);
         });
         
         document.getElementById('privacy-link').addEventListener('click', (e) => {
             e.preventDefault();
             const lang = document.documentElement.lang || 'pt-BR';
             const t = translations[lang];
-            showModal(`
+            UIModule.showModal(`
                 <h2 class="font-bold text-blue-800 mb-2">${t['privacy-title']}</h2>
                 <p class="text-sm">Os dados informados são usados apenas para a análise clínica e geração de relatórios. As informações são armazenadas localmente no seu dispositivo e não são transmitidas para servidores externos.</p>
-            `);
+                <p class="text-sm mt-2">Para maior segurança, os dados sensíveis são criptografados antes de serem armazenados.</p>
+            `, t['privacy-title']);
         });
         
-        // --- APP RESET FUNCTION ---
-        function resetApp() {
-            form.reset();
-            document.getElementById('report-output').classList.add('hidden');
-            progressContainer.classList.remove('hidden');
-            navButtons.classList.remove('hidden');
-            currentStep = 1;
-            showStep(1);
-            document.getElementById('fast-mode-btn').click();
-        }
-
-        // --- FORM SUBMISSION & API CALL ---
+        // Envio do formulário
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             // Validação de Ranges
-            const validationWarnings = validateFieldRanges();
+            const validationWarnings = ValidationModule.validateFieldRanges();
             if (validationWarnings.length > 0) {
-                const message = "Atenção! Os seguintes valores parecem estar fora de uma faixa esperada:\n\n" + validationWarnings.join("\n") + "\n\nDeseja continuar com a análise mesmo assim?";
-                if (!confirm(message)) {
-                    return; // Para a execução se o usuário cancelar
-                }
-            }
+                 const message = "Atenção! Os seguintes valores parecem estar fora de uma faixa esperada:\n\n" + 
+                                validationWarnings.join("\n") + 
+                                "\n\nDeseja continuar com a análise mesmo assim?";
+                
+                // Usando o modal customizado em vez de confirm()
+                UIModule.showModal(`
+                    <h2 class="text-xl font-bold mb-4 text-yellow-700">Atenção</h2>
+                    <p class="mb-4">Os seguintes valores parecem estar fora de uma faixa esperada:</p>
+                    <ul class="list-disc pl-5 mb-6 text-sm">
+                        ${validationWarnings.map(w => `<li>${w.substring(2)}</li>`).join('')}
+                    </ul>
+                    <p class="font-semibold">Deseja continuar com a análise mesmo assim?</p>
+                    <div class="mt-6 flex justify-end gap-4">
+                        <button id="modal-cancel-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg py-2 px-6">Cancelar</button>
+                        <button id="modal-confirm-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-2 px-6">Continuar</button>
+                    </div>
+                `, "Valores Fora da Faixa");
 
-            progressContainer.classList.add('hidden');
-            navButtons.classList.add('hidden');
+                document.getElementById('modal-confirm-btn').onclick = () => {
+                    UIModule.hideModal();
+                    proceedWithAnalysis();
+                };
+                document.getElementById('modal-cancel-btn').onclick = () => {
+                    UIModule.hideModal();
+                };
+                return; // Impede a continuação imediata
+            }
+            
+            proceedWithAnalysis();
+        });
+
+        async function proceedWithAnalysis() {
+            document.getElementById('progress-container').classList.add('hidden');
+            document.getElementById('nav-buttons').classList.add('hidden');
             document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
             document.getElementById('loading-section').classList.remove('hidden');
             document.getElementById('report-output').classList.add('hidden');
             document.getElementById('error-message').classList.add('hidden');
-
+            
             const formData = new FormData(form);
             const labData = {};
+            
             formData.forEach((value, key) => {
                 if (value.trim()) {
                     labData[key] = value;
                 }
             });
+            
             const isPediatric = document.getElementById('is-pediatric').checked;
             const patientType = isPediatric ? `criança de ${labData['patient-age']} anos` : `adulto de ${labData['patient-age']} anos`;
-
+            
             const promptText = `
                 **PERSONA:** Você é um médico sênior, experiente em missões e telemedicina. Sua missão é orientar um missionário em campo, que tem conhecimento básico de saúde, mas não é médico. Use uma linguagem **empática, clara e direta**, como um mentor. Evite jargão médico complexo, mas explique os conceitos clínicos de forma simples.
-
                 **TAREFA:** Analise os dados do paciente abaixo e gere um relatório de triagem em HTML. O objetivo é fornecer uma orientação prática e segura para o missionário.
-
                 **DADOS DO PACIENTE:**
                 - Tipo: ${patientType}
                 - Nome: ${labData['patient-name']}
@@ -737,222 +1222,120 @@
                 - Exames:
                 ${Object.entries(allLabFields).map(([key, data]) => labData[key] ? `  - ${translations['pt-BR'][key].label}: ${labData[key]}` : '').filter(Boolean).join('\n')}
                 - História Clínica: ${labData['outros_dados']}
-
                 **FORMATO DA RESPOSTA (HTML OBRIGATÓRIO):**
                 Sua resposta DEVE ser um único bloco de HTML, usando as classes do Tailwind CSS abaixo para formatação.
-
                 1.  **Título Principal (h2):** Um resumo claro e direto da situação.
                     * Exemplo: \`<h2 class="text-2xl font-bold text-gray-800 mb-4">Análise Preliminar: Sinais de Anemia e Possível Infecção</h2>\`
-
                 2.  **Pontos de Atenção (Card Amarelo):** Destaque os resultados de exames mais preocupantes. Para cada ponto, explique o **significado clínico** em termos simples.
                     * Use a estrutura: \`<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">\`
                     * Dentro, use uma lista: \`<ul>\`
                     * Cada item da lista (li) deve ter o nome do exame em negrito, seguido da explicação.
                     * Exemplo: \`<li><strong>Hemoglobina Baixa:</strong> Isso indica anemia, ou seja, pode estar faltando oxigênio no sangue, o que causa cansaço e palidez.</li>\`
-
                 3.  **Hipóteses Diagnósticas (Card Azul):** Liste as possíveis causas para os achados, da mais provável para a menos provável.
                     * Use a estrutura: \`<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md mb-6">\`
                     * Dentro, use uma lista numerada: \`<ol>\`
                     * Exemplo: \`<li><strong>Infecção Bacteriana:</strong> Sugerida pelo aumento dos leucócitos e neutrófilos.</li>\`
-
                 4.  **Recomendação Prática (Card Verde):** Dê os próximos passos claros e acionáveis para o missionário em campo. Separe em "O que fazer AGORA" e "O que observar".
                     * Use a estrutura: \`<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md">\`
                     * Use subtítulos (h4) para "O que fazer AGORA:" e "O que observar nas próximas horas/dias:".
                     * Exemplo: \`<h4 class="font-bold text-gray-700">O que fazer AGORA:</h4><ul><li>- Iniciar hidratação oral vigorosa.</li></ul>\`
-
                 5.  **Cuidados Pediátricos (Opcional - Card Roxo):** Se o paciente for pediátrico, adicione esta seção.
                     * Use a estrutura: \`<div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-md mt-6">\`
                     * Dê orientações específicas para crianças.
-
                 **AVISO FINAL:** Inclua um aviso legal no final, em um parágrafo \`<p class="text-xs text-gray-500 mt-6">\`.
                 * Texto do aviso: "LEMBRETE: Esta é uma análise de triagem baseada em IA e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo."
             `;
             
             try {
-                const apiKey = "AIzaSyAz6tEar6NJokgbEch5QLtbKL7dw_v6B3U";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-                });
-
-                if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
-                
-                const result = await response.json();
-                const reportHtml = result.candidates[0].content.parts[0].text;
+                const reportHtml = await ApiModule.generateContent(promptText);
                 
                 const reportOutput = document.getElementById('report-output');
-                
                 const lang = document.documentElement.lang || 'pt-BR';
                 const t = translations[lang];
-
+                
                 reportOutput.innerHTML = `
                     <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
                     <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
                         <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                            </svg>
                             ${t['report-pdf-btn']}
                         </button>
                         <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
                         <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
                     </div>
                 `;
-
+                
                 document.getElementById('generate-pdf-btn').addEventListener('click', () => {
-                    generatePdf(reportHtml, labData['patient-name']);
+                    PDFModule.generatePdf(reportHtml, labData['patient-name']);
                 });
                 
                 document.getElementById('back-to-edit-btn').addEventListener('click', () => {
                     reportOutput.classList.add('hidden');
-                    progressContainer.classList.remove('hidden');
-                    navButtons.classList.remove('hidden');
-                    showStep(4);
+                    document.getElementById('progress-container').classList.remove('hidden');
+                    document.getElementById('nav-buttons').classList.remove('hidden');
+                    UIModule.showStep(4);
                 });
-
+                
                 document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
-
+                
+                reportOutput.classList.remove('hidden');
+                reportOutput.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error("Falha detalhada na análise:", error);
+                
+                // Modo offline é agora o comportamento padrão devido à remoção da chave de API do frontend
+                const reportHtml = OfflineModule.generateEnhancedOfflineReport(labData);
+                
+                const reportOutput = document.getElementById('report-output');
+                const lang = document.documentElement.lang || 'pt-BR';
+                const t = translations[lang];
+                
+                reportOutput.innerHTML = `
+                    <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
+                    <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
+                        <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            ${t['report-pdf-btn']}
+                        </button>
+                        <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
+                        <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
+                    </div>
+                `;
+                
+                document.getElementById('generate-pdf-btn').addEventListener('click', () => {
+                    PDFModule.generatePdf(reportHtml, labData['patient-name']);
+                });
+                
+                document.getElementById('back-to-edit-btn').addEventListener('click', () => {
+                    reportOutput.classList.add('hidden');
+                    document.getElementById('progress-container').classList.remove('hidden');
+                    document.getElementById('nav-buttons').classList.remove('hidden');
+                    UIModule.showStep(4);
+                });
+                
+                document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
+                
                 reportOutput.classList.remove('hidden');
                 reportOutput.scrollIntoView({ behavior: 'smooth' });
 
-            } catch (error) {
-                console.error("Falha detalhada na análise:", error);
-                if (error.message.includes('Failed to fetch')) {
-                    generateOfflineReport(labData);
-                } else {
-                    document.getElementById('error-message').textContent = `Falha ao gerar relatório: ${error.message}. Verifique sua chave de API e conexão.`;
-                    document.getElementById('error-message').classList.remove('hidden');
-                }
             } finally {
                 document.getElementById('loading-section').classList.add('hidden');
-                progressContainer.classList.remove('hidden');
-                navButtons.classList.remove('hidden');
+                document.getElementById('progress-container').classList.remove('hidden');
+                document.getElementById('nav-buttons').classList.remove('hidden');
             }
-        });
-        
-        function validateFieldRanges() {
-            const warnings = [];
-            const formData = new FormData(form);
-            formData.forEach((value, key) => {
-                const field = allLabFields[key];
-                if (field && field.range && value.trim() !== '') {
-                    const numValue = parseFloat(value.replace(',', '.'));
-                    if (!isNaN(numValue)) {
-                        if (numValue < field.range.min || numValue > field.range.max) {
-                             const lang = document.documentElement.lang || 'pt-BR';
-                             const label = translations[lang][key].label;
-                             warnings.push(`- ${label}: ${value}`);
-                        }
-                    }
-                }
-            });
-            return warnings;
-        }
-
-        function generateOfflineReport(labData) {
-            const lang = document.documentElement.lang || 'pt-BR';
-            let reportHtml = `<div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-6" role="alert">
-                <p class="font-bold">Modo Offline</p>
-                <p>Não foi possível conectar à IA. Este é um relatório de triagem básico gerado localmente.</p>
-            </div>`;
-            
-            reportHtml += `<h2 class="text-2xl font-bold text-gray-800 mb-4">Triagem Rápida Offline</h2>`;
-            
-            let findings = '<ul>';
-            if (labData.hemoglobina && parseFloat(labData.hemoglobina.replace(',','.')) < 12) {
-                findings += '<li><strong>Hemoglobina Baixa:</strong> Sugere possível anemia.</li>';
-            }
-            if (labData.plaquetas && parseFloat(labData.plaquetas.replace(',','.')) < 150000) {
-                findings += '<li><strong>Plaquetas Baixas:</strong> Atenção para risco de sangramentos.</li>';
-            }
-            if (labData.leucocitos && parseFloat(labData.leucocitos.replace(',','.')) > 11000) {
-                findings += '<li><strong>Leucócitos Altos:</strong> Pode indicar uma infecção.</li>';
-            }
-            if (findings === '<ul>') {
-                findings += '<li>Nenhum alerta crítico nos exames básicos preenchidos.</li>';
-            }
-            findings += '</ul>';
-
-            reportHtml += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">${findings}</div>`;
-            reportHtml += `<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md"><h4 class="font-bold">Recomendação</h4><p>Avalie o quadro clínico do paciente. Se houver sinais de gravidade, encaminhe para avaliação médica presencial.</p></div>`;
-
-            const reportOutput = document.getElementById('report-output');
-            const t = translations[lang];
-            reportOutput.innerHTML = `
-                <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
-                <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
-                    <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
-                        ${t['report-pdf-btn']}
-                    </button>
-                    <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
-                    <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
-                </div>
-            `;
-            document.getElementById('generate-pdf-btn').addEventListener('click', () => generatePdf(reportHtml, labData['patient-name']));
-            document.getElementById('back-to-edit-btn').addEventListener('click', () => {
-                reportOutput.classList.add('hidden');
-                progressContainer.classList.remove('hidden');
-                navButtons.classList.remove('hidden');
-                showStep(4);
-            });
-            document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
-            reportOutput.classList.remove('hidden');
-            reportOutput.scrollIntoView({ behavior: 'smooth' });
         }
         
-        async function generatePdf(reportHtml, patientName) {
-            const { jsPDF } = window.jspdf;
-            const reportElement = document.getElementById('report-content-for-pdf');
-            
-            try {
-                const canvas = await html2canvas(reportElement, {
-                    scale: 2,
-                    useCORS: true,
-                    windowWidth: reportElement.scrollWidth,
-                    windowHeight: reportElement.scrollHeight
-                });
-                
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = 210; // A4 width in mm
-                const pageHeight = 295; // A4 height in mm
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                let position = 0;
-
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-
-                while (heightLeft >= 0) {
-                  position = heightLeft - imgHeight;
-                  pdf.addPage();
-                  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                  heightLeft -= pageHeight;
-                }
-                
-                pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`);
-                
-                showModal(`
-                    <h2 class="text-xl font-bold mb-2">PDF Gerado com Sucesso!</h2>
-                    <p class="text-sm"><strong>Aviso de Segurança:</strong> Lembre-se de não compartilhar arquivos com dados de pacientes em redes de Wi-Fi públicas ou inseguras.</p>
-                `);
-
-            } catch (error) {
-                console.error("Erro ao gerar PDF:", error);
-                alert("Não foi possível gerar o PDF.");
-            }
-        }
-
-        // --- PWA INSTALLATION ---
+        // Instalação do PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             installBtn.classList.remove('hidden');
         });
-
+        
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -961,40 +1344,66 @@
                 installBtn.classList.add('hidden');
             }
         });
-
-        // --- TRANSLATION ---
-        function setLanguage(lang) {
-            document.documentElement.lang = lang;
-            localStorage.setItem('preferredLanguage', lang);
-            const t = translations[lang] || translations['pt-BR'];
-
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.getAttribute('data-key');
-                if (t[key]) {
-                    if (el.tagName === 'TEXTAREA' && el.hasAttribute('placeholder')) {
-                        el.placeholder = t[key];
-                    } else if(el.hasAttribute('data-text')) {
-                        el.dataset.text = t[key];
-                    }
-                    else {
-                        el.innerHTML = t[key];
-                    }
-                }
-            });
-            renderLabFields(document.querySelector('#fast-mode-btn').classList.contains('border-blue-600'));
-        }
-
+        
+        // Mudança de idioma
         document.querySelectorAll('.lang-switcher button').forEach(btn => {
             btn.addEventListener('click', () => {
-                setLanguage(btn.dataset.lang);
+                I18nModule.setLanguage(btn.dataset.lang);
             });
         });
-
-        // --- INITIALIZATION ---
+        
+        // Atalhos de teclado
+        document.addEventListener('keydown', (e) => {
+            // Alt + N para próximo passo
+            if (e.altKey && e.key === 'n') {
+                e.preventDefault();
+                if (currentStep < totalSteps && ValidationModule.validateStep(currentStep)) {
+                    currentStep++;
+                    UIModule.showStep(currentStep);
+                }
+            }
+            // Alt + P para passo anterior
+            if (e.altKey && e.key === 'p') {
+                e.preventDefault();
+                if (currentStep > 1) {
+                    currentStep--;
+                    UIModule.showStep(currentStep);
+                }
+            }
+            // Alt + H para ajuda
+            if (e.altKey && e.key === 'h') {
+                e.preventDefault();
+                document.getElementById('help-btn').click();
+            }
+        });
+        
+        // Status de conexão
+        window.addEventListener('online', () => UIModule.updateConnectionStatus());
+        window.addEventListener('offline', () => UIModule.updateConnectionStatus());
+        
+        // --- INICIALIZAÇÃO ---
+        
+        // Verificar suporte a Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js') // Alterado para caminho relativo
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+        
+        // Inicializar aplicativo
         const savedLang = localStorage.getItem('preferredLanguage') || 'pt-BR';
-        setLanguage(savedLang);
-        showStep(currentStep);
+        I18nModule.setLanguage(savedLang);
+        UIModule.showStep(currentStep);
         renderLabFields(true); // Inicia no modo rápido
+        
+        // Mostrar status de conexão inicial
+        UIModule.updateConnectionStatus();
     </script>
 </body>
 </html>
