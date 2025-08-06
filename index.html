@@ -596,11 +596,26 @@
         // Módulo de API
         const ApiModule = {
             async generateContent(prompt) {
-                // REMOVED API KEY FROM FRONTEND
-                // This function should now call a secure backend endpoint (e.g., a Cloud Function)
-                // For demonstration, we'll simulate a failure that triggers offline mode.
-                console.log("Attempting to call backend for AI analysis...");
-                throw new Error("Failed to fetch. API calls must be made from a secure backend.");
+                try {
+                    // ATENÇÃO: A chave de API está exposta no código do cliente.
+                    // Isso é um risco de segurança. Em produção, a chave deve ser gerenciada em um backend.
+                    const apiKey = "AIzaSyAz6tEar6NJokgbEch5QLtbKL7dw_v6B3U";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    
+                    if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
+                    
+                    const result = await response.json();
+                    return result.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    console.error("Falha na API:", error);
+                    throw error;
+                }
             }
         };
         
@@ -853,7 +868,7 @@
                 "leucocitos": { "label": "Leucocitos (/mm³)", "explanation": "Glóbulos blancos que defienden el cuerpo contra infecciones." },
                 "glicose": { "label": "Glucemia (mg/dL)", "explanation": "Mide el azúcar en la sangre. Alto puede ser diabetes, bajo puede causar desmayos." },
                 "creatinina": { "label": "Creatinina (mg/dL)", "explanation": "Evalúa la función de los riñones." },
-                "hematocrito": { "label": "Hematocrito (%)", "explanation": "Muestra el porcentaje de sangre compuesto por glóbulos rojos." },
+                "hematocrito": { "label": "Hematocrito (%)", "explanation": "Muestra el porcentaje de sangre composto por glóbulos rojos." },
                 "vcm": { "label": "VCM (fL)", "explanation": "Muestra el tamaño promedio de los glóbulos rojos. Ayuda a descubrir el tipo de anemia." },
                 "hcm": { "label": "HCM (pg)", "explanation": "Muestra cuánta hemoglobina hay en cada glóbulo rojo." },
                 "neutrofilos": { "label": "Neutrófilos (%)", "explanation": "Tipo de leucocito que aumenta en infecciones bacterianas." },
