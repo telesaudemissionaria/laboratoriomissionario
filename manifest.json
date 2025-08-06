@@ -1,12 +1,11 @@
 {
   "name": "MISSIONLAB",
   "short_name": "MissionLab",
-  "description": "Ferramenta de apoio para triagem e análise de exames em campo missionário.",
-  "start_url": "/index.html",
+  "description": "Ferramenta de apoio para triagem e análise de exames em campo.",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#f9fafb",
   "theme_color": "#1d4ed8",
-  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icons/icon-72x72.png",
