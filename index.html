@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-key="title">MISSIONLAB</title>
+    
+    <!-- Metadados Essenciais para PWA -->
     <meta name="theme-color" content="#1d4ed8"/>
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
+    <!-- Scripts e Estilos -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -217,7 +222,7 @@
     <script type="module">
         // --- MÓDULOS DE FUNCIONALIDADE ---
         
-        // Módulo de Criptografia
+        // Módulo de Criptografia (sem alterações)
         const CryptoModule = {
             async encryptData(data, password) {
                 try {
@@ -306,7 +311,7 @@
             }
         };
         
-        // Módulo de Validação
+        // Módulo de Validação (sem alterações)
         const ValidationModule = {
             validateStep(step) {
                 const inputs = document.querySelectorAll(`#step-${step} [required]`);
@@ -376,7 +381,7 @@
             }
         };
         
-        // Módulo de UI
+        // Módulo de UI (sem alterações)
         const UIModule = {
             updateConnectionStatus() {
                 const statusElement = document.getElementById('connection-status');
@@ -461,7 +466,7 @@
             }
         };
         
-        // Módulo Offline
+        // Módulo Offline (sem alterações)
         const OfflineModule = {
             offlineRules: {
                 anemia: {
@@ -558,7 +563,7 @@
             }
         };
         
-        // Módulo de Armazenamento
+        // Módulo de Armazenamento (sem alterações)
         const StorageModule = {
             async saveEncryptedData(key, data, password) {
                 try {
@@ -593,13 +598,28 @@
             }
         };
         
-        // Módulo de API
+        // Módulo de API (COM ALTERAÇÃO DE SEGURANÇA)
         const ApiModule = {
             async generateContent(prompt) {
                 try {
-                    // ATENÇÃO: A chave de API está exposta no código do cliente.
-                    // Isso é um risco de segurança. Em produção, a chave deve ser gerenciada em um backend.
-                    const apiKey = "AIzaSyAz6tEar6NJokgbEch5QLtbKL7dw_v6B3U";
+                    // ===================================================================
+                    // ALERTA DE SEGURANÇA CRÍTICO - NÃO EXPONHA SUA CHAVE DE API AQUI
+                    // ===================================================================
+                    // Sua chave de API foi removida para proteger sua conta e seu projeto.
+                    // Uma chave exposta no código do cliente (frontend) pode ser roubada
+                    // e usada por qualquer pessoa, gerando custos enormes.
+                    //
+                    // A SOLUÇÃO CORRETA:
+                    // 1. Crie um "backend" simples (ex: Google Cloud Function, Netlify Function).
+                    // 2. Armazene sua chave de API de forma segura nesse backend.
+                    // 3. Faça a chamada para o seu backend a partir daqui, e o backend
+                    //    fará a chamada segura para a API do Google.
+                    //
+                    // A linha abaixo foi mantida para evitar que o código quebre, mas
+                    // ela precisa ser substituída pela chamada ao seu backend.
+                    const apiKey = "SUA_CHAVE_DE_API_DEVE_FICAR_SEGURA_NO_BACKEND"; 
+                    // ===================================================================
+
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -619,7 +639,7 @@
             }
         };
         
-        // Módulo de PDF
+        // Módulo de PDF (sem alterações)
         const PDFModule = {
             async generatePdf(reportHtml, patientName) {
                 const { jsPDF } = window.jspdf;
@@ -668,7 +688,7 @@
             }
         };
         
-        // Módulo de Internacionalização
+        // Módulo de Internacionalização (sem alterações)
         const I18nModule = {
             setLanguage(lang) {
                 document.documentElement.lang = lang;
@@ -703,7 +723,7 @@
         const installBtn = document.getElementById('install-app-btn');
         let deferredPrompt;
         
-        // --- DADOS ---
+        // --- DADOS (sem alterações) ---
         const allLabFields = {
             // Triagem Rápida
             "hemoglobina": { group: "Série Vermelha", quick: true, range: { min: 1, max: 25 } },
@@ -1177,8 +1197,8 @@
             const validationWarnings = ValidationModule.validateFieldRanges();
             if (validationWarnings.length > 0) {
                  const message = "Atenção! Os seguintes valores parecem estar fora de uma faixa esperada:\n\n" + 
-                                validationWarnings.join("\n") + 
-                                "\n\nDeseja continuar com a análise mesmo assim?";
+                                 validationWarnings.join("\n") + 
+                                 "\n\nDeseja continuar com a análise mesmo assim?";
                 
                 // Usando o modal customizado em vez de confirm()
                 UIModule.showModal(`
