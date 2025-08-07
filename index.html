@@ -6,12 +6,8 @@
     <title data-key="title">MISSIONLAB</title>
     
     <!-- Metadados Essenciais para PWA (Progressive Web App) -->
-    <!-- A cor da barra de status do navegador em dispositivos móveis -->
     <meta name="theme-color" content="#1d4ed8"/>
-    <!-- O manifest.json descreve o aplicativo (nome, ícones, etc.) para que ele possa ser "instalado" -->
-    <!-- Verifique se o caminho para este arquivo está correto no seu servidor. -->
     <link rel="manifest" href="manifest.json">
-    <!-- Ícone para dispositivos Apple quando adicionado à tela inicial -->
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
     <!-- Scripts e Estilos -->
@@ -160,19 +156,39 @@
                         </div>
                     </div>
                     
-                    <!-- Passo 3: Sinais e Sintomas -->
+                    <!-- Passo 3: Sinais, Sintomas e Cuidado Integral -->
                     <div id="step-3" class="wizard-step">
                          <h2 class="text-2xl font-semibold mb-6 text-gray-900 flex items-center gap-3" data-key="step3-title">
                             <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v12a4 4 0 01-4 4H7z"></path></svg>
                             Sinais, Sintomas e História
                         </h2>
-                        <div>
-                            <label for="outros_dados" class="block text-sm font-medium required-label" data-key="clinical-history-label">Descreva o que o paciente está sentindo</label>
-                            <div class="flex items-start gap-2 mt-1">
-                                <textarea id="outros_dados" name="outros_dados" rows="8" class="w-full rounded-md p-2 border-gray-300" data-key="clinical-history-placeholder" placeholder="Ex: Febre há 3 dias, dor de cabeça, sem apetite..." required aria-required="true"></textarea>
-                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-clinical-history" data-text="Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes." aria-label="Ouvir instrução">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
-                                </button>
+                        <div class="space-y-6">
+                            <div>
+                                <label for="outros_dados" class="block text-sm font-medium required-label" data-key="clinical-history-label">Descreva o que o paciente está sentindo</label>
+                                <div class="flex items-start gap-2 mt-1">
+                                    <textarea id="outros_dados" name="outros_dados" rows="6" class="w-full rounded-md p-2 border-gray-300" data-key="clinical-history-placeholder" placeholder="Ex: Febre há 3 dias, dor de cabeça, sem apetite..." required aria-required="true"></textarea>
+                                    <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-key="speak-clinical-history" data-text="Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes." aria-label="Ouvir instrução">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- SEÇÃO DE CUIDADO INTEGRAL -->
+                            <div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-lg">
+                                <h3 class="font-semibold text-purple-800 mb-3" data-key="holistic-care-title">Apoio Emocional e Espiritual (Opcional)</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="stress-level" class="block text-sm font-medium text-gray-700" data-key="stress-level-label">Nível de estresse (0 a 10)</label>
+                                        <input type="range" id="stress-level" name="stress-level" min="0" max="10" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1">
+                                    </div>
+                                    <div>
+                                        <label for="emotional-state" class="block text-sm font-medium text-gray-700" data-key="emotional-state-label">Como tem se sentido emocionalmente?</label>
+                                        <input type="text" id="emotional-state" name="emotional-state" class="w-full rounded-md p-2 border-gray-300 mt-1" placeholder="Ex: Ansioso, cansado, com esperança...">
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="prayer-request" name="prayer-request" class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                        <label for="prayer-request" class="ml-2 text-sm font-medium text-gray-700" data-key="prayer-request-label">Gostaria de receber uma oração ou palavra de encorajamento?</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -205,7 +221,7 @@
             <!-- Seções de Resultado -->
             <div id="loading-section" class="text-center my-10 hidden" aria-live="polite">
                 <div class="loader ease-linear rounded-full border-8 border-t-8 h-24 w-24 mx-auto"></div>
-                <p class="mt-4 text-lg" data-key="loading-text">Analisando dados... Por favor, aguarde.</p>
+                <p id="loading-text" class="mt-4 text-lg" data-key="loading-text">Analisando dados... Por favor, aguarde.</p>
             </div>
             
             <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg my-6" role="alert"></div>
@@ -224,498 +240,44 @@
     </div>
 
     <script type="module">
-        // --- MÓDULOS DE FUNCIONALIDADE ---
-        
-        // Módulo de Criptografia (sem alterações)
-        const CryptoModule = {
-            async encryptData(data, password) {
-                try {
-                    const encoder = new TextEncoder();
-                    const dataBuffer = encoder.encode(JSON.stringify(data));
-                    const passwordBuffer = encoder.encode(password);
-                    
-                    const importedKey = await crypto.subtle.importKey(
-                        'raw',
-                        passwordBuffer,
-                        { name: 'PBKDF2' },
-                        false,
-                        ['deriveKey']
-                    );
-                    
-                    const salt = crypto.getRandomValues(new Uint8Array(16));
-                    const derivedKey = await crypto.subtle.deriveKey(
-                        {
-                            name: 'PBKDF2',
-                            salt: salt,
-                            iterations: 100000,
-                            hash: 'SHA-256'
-                        },
-                        importedKey,
-                        { name: 'AES-GCM', length: 256 },
-                        false,
-                        ['encrypt']
-                    );
-                    
-                    const iv = crypto.getRandomValues(new Uint8Array(12));
-                    const encryptedData = await crypto.subtle.encrypt(
-                        { name: 'AES-GCM', iv: iv },
-                        derivedKey,
-                        dataBuffer
-                    );
-                    
-                    return {
-                        encryptedData: Array.from(new Uint8Array(encryptedData)),
-                        iv: Array.from(iv),
-                        salt: Array.from(salt)
-                    };
-                } catch (error) {
-                    console.error("Erro na criptografia:", error);
-                    return null;
-                }
-            },
-            
-            async decryptData(encryptedData, password, iv, salt) {
-                try {
-                    const encoder = new TextEncoder();
-                    const passwordBuffer = encoder.encode(password);
-                    
-                    const importedKey = await crypto.subtle.importKey(
-                        'raw',
-                        passwordBuffer,
-                        { name: 'PBKDF2' },
-                        false,
-                        ['deriveKey']
-                    );
-                    
-                    const derivedKey = await crypto.subtle.deriveKey(
-                        {
-                            name: 'PBKDF2',
-                            salt: new Uint8Array(salt),
-                            iterations: 100000,
-                            hash: 'SHA-256'
-                        },
-                        importedKey,
-                        { name: 'AES-GCM', length: 256 },
-                        false,
-                        ['decrypt']
-                    );
-                    
-                    const decryptedData = await crypto.subtle.decrypt(
-                        { name: 'AES-GCM', iv: new Uint8Array(iv) },
-                        derivedKey,
-                        new Uint8Array(encryptedData)
-                    );
-                    
-                    const decoder = new TextDecoder();
-                    return JSON.parse(decoder.decode(decryptedData));
-                } catch (error) {
-                    console.error("Erro na descriptografia:", error);
-                    return null;
-                }
-            }
-        };
-        
-        // Módulo de Validação (sem alterações)
-        const ValidationModule = {
-            validateStep(step) {
-                const inputs = document.querySelectorAll(`#step-${step} [required]`);
-                for (let input of inputs) {
-                    if ((input.type === 'checkbox' && !input.checked) || 
-                        (input.type !== 'checkbox' && !input.value.trim())) {
-                        const fieldName = input.labels[0].textContent.replace(' *', '');
-                        this.showValidationError(`Por favor, preencha o campo obrigatório: "${fieldName}".`);
-                        input.focus();
-                        return false;
-                    }
-                }
-                return true;
-            },
-            
-            validateFieldRanges() {
-                const warnings = [];
-                const formData = new FormData(form);
-                
-                formData.forEach((value, key) => {
-                    const field = allLabFields[key];
-                    if (field && field.range && value.trim() !== '') {
-                        const numValue = parseFloat(value.replace(',', '.'));
-                        if (!isNaN(numValue)) {
-                            if (numValue < field.range.min || numValue > field.range.max) {
-                                const lang = document.documentElement.lang || 'pt-BR';
-                                const label = translations[lang][key].label;
-                                warnings.push(`- ${label}: ${value}`);
-                            }
-                        }
-                    }
-                });
-                
-                return warnings;
-            },
-            
-            validateLabData(data) {
-                const errors = [];
-                
-                // Validar idade
-                if (data['patient-age'] && (isNaN(data['patient-age']) || data['patient-age'] <= 0)) {
-                    errors.push("Idade deve ser um número positivo");
-                }
-                
-                // Validar valores numéricos dos exames
-                for (const [key, value] of Object.entries(data)) {
-                    if (allLabFields[key] && value) {
-                        const numValue = parseFloat(value.replace(',', '.'));
-                        if (isNaN(numValue)) {
-                            errors.push(`${key} deve ser um número válido`);
-                        }
-                    }
-                }
-                
-                return errors;
-            },
-            
-            showValidationError(message) {
-                const errorElement = document.getElementById('error-message');
-                errorElement.textContent = message;
-                errorElement.classList.remove('hidden');
-                
-                // Remover mensagem após 5 segundos
-                setTimeout(() => {
-                    errorElement.classList.add('hidden');
-                }, 5000);
-            }
-        };
-        
-        // Módulo de UI (sem alterações)
-        const UIModule = {
-            updateConnectionStatus() {
-                const statusElement = document.getElementById('connection-status');
-                const statusText = document.getElementById('status-text');
-                
-                if (navigator.onLine) {
-                    statusElement.className = 'fixed top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800';
-                    statusText.textContent = 'Online';
-                } else {
-                    statusElement.className = 'fixed top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800';
-                    statusText.textContent = 'Offline';
-                }
-                
-                statusElement.classList.remove('hidden');
-                
-                // Ocultar após 3 segundos
-                setTimeout(() => {
-                    statusElement.classList.add('hidden');
-                }, 3000);
-            },
-            
-            showStep(step) {
-                document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
-                document.getElementById(`step-${step}`).classList.add('active');
-                
-                const progressBar = document.getElementById('progress-bar');
-                progressBar.style.width = `${(step / totalSteps) * 100}%`;
-                progressBar.setAttribute('aria-valuenow', (step / totalSteps) * 100);
-                
-                const progressText = document.getElementById('progress-text');
-                const lang = document.documentElement.lang || 'pt-BR';
-                progressText.dataset.key = `progress-step-${step}`;
-                progressText.textContent = translations[lang][`progress-step-${step}`];
-                
-                prevBtn.style.display = step === 1 ? 'none' : 'inline-block';
-                nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block';
-                
-                if (step === totalSteps) {
-                    this.updateReviewContent();
-                }
-            },
-            
-            updateReviewContent() {
-                const reviewContent = document.getElementById('review-content');
-                const formData = new FormData(form);
-                let html = '<ul>';
-                
-                formData.forEach((value, key) => {
-                    const el = form.elements[key];
-                    if (value && el && el.labels) {
-                        const label = el.labels[0] ? el.labels[0].textContent.replace(' *', '') : key;
-                        if(key !== 'consent-check') {
-                            html += `<li class="py-1"><strong class="font-semibold">${label}:</strong> ${value}</li>`;
-                        }
-                    }
-                });
-                
-                html += `<li><strong class="font-semibold">Paciente Pediátrico:</strong> ${document.getElementById('is-pediatric').checked ? 'Sim' : 'Não'}</li>`;
-                html += '</ul>';
-                reviewContent.innerHTML = html;
-            },
-            
-            showModal(content, title = "Informação") {
-                const modal = document.getElementById('modal');
-                const modalContent = document.getElementById('modal-content');
-                const modalTitle = document.getElementById('modal-title');
-                
-                modalTitle.textContent = title;
-                modalContent.innerHTML = content;
-                modal.classList.remove('hidden');
-                
-                // Foco no modal para acessibilidade
-                const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-                if (focusableElements.length > 0) {
-                    focusableElements[0].focus();
-                }
-            },
-            
-            hideModal() {
-                const modal = document.getElementById('modal');
-                modal.classList.add('hidden');
-            }
-        };
-        
-        // Módulo Offline (sem alterações)
-        const OfflineModule = {
-            offlineRules: {
-                anemia: {
-                    condition: (data) => {
-                        const hemo = parseFloat(data.hemoglobina?.replace(',', '.'));
-                        const age = parseInt(data['patient-age']);
-                        
-                        if (!hemo || !age) return false;
-                        
-                        // Valores de referência por idade
-                        if (age < 12) {
-                            return hemo < 11.5; // Crianças
-                        } else if (age < 50) {
-                            return hemo < 12; // Adultos
-                        } else {
-                            return hemo < 12; // Idosos
-                        }
-                    },
-                    message: "Possível anemia detectada. Recomenda-se avaliação complementar."
-                },
-                infection: {
-                    condition: (data) => {
-                        const leuko = parseFloat(data.leucocitos?.replace(',', '.'));
-                        return leuko && leuko > 11000;
-                    },
-                    message: "Leucocitose detectada. Pode indicar processo infeccioso."
-                },
-                thrombocytopenia: {
-                    condition: (data) => {
-                        const plaquetas = parseFloat(data.plaquetas?.replace(',', '.'));
-                        return plaquetas && plaquetas < 150000;
-                    },
-                    message: "Trombocitopenia detectada. Atenção para risco de sangramentos."
-                },
-                hyperglycemia: {
-                    condition: (data) => {
-                        const glicose = parseFloat(data.glicose?.replace(',', '.'));
-                        return glicose && glicose > 126;
-                    },
-                    message: "Hiperglicemia detectada. Possível diabetes."
-                },
-                renalImpairment: {
-                    condition: (data) => {
-                        const creatinina = parseFloat(data.creatinina?.replace(',', '.'));
-                        return creatinina && creatinina > 1.2;
-                    },
-                    message: "Creatinina elevada. Possível comprometimento renal."
-                }
-            },
-            
-            generateEnhancedOfflineReport(labData) {
-                const findings = [];
-                
-                // Avaliar todas as regras
-                for (const [conditionName, rule] of Object.entries(this.offlineRules)) {
-                    if (rule.condition(labData)) {
-                        findings.push(rule.message);
-                    }
-                }
-                
-                // Gerar relatório com base nas descobertas
-                let reportHtml = `<div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-6" role="alert">
-                    <p class="font-bold">Modo Offline</p>
-                    <p>Não foi possível conectar à IA. Este é um relatório de triagem básico gerado localmente.</p>
-                </div>`;
-                
-                reportHtml += `<h2 class="text-2xl font-bold text-gray-800 mb-4">Análise Offline</h2>`;
-                
-                if (findings.length > 0) {
-                    reportHtml += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
-                        <h3 class="font-bold mb-2">Principais Achados:</h3>
-                        <ul>${findings.map(f => `<li>- ${f}</li>`).join('')}</ul>
-                    </div>`;
-                } else {
-                    reportHtml += `<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md mb-6">
-                        <p>Nenhum achado significativo detectado nos exames fornecidos com base nas regras de triagem offline.</p>
-                    </div>`;
-                }
-                
-                // Adicionar recomendações gerais
-                reportHtml += `<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md">
-                    <h3 class="font-bold mb-2">Recomendações Gerais:</h3>
-                    <ul class="list-disc pl-5">
-                        <li>Manter o paciente em observação.</li>
-                        <li>Garantir hidratação adequada.</li>
-                        <li>Procurar assistência médica se os sintomas piorarem ou não melhorarem.</li>
-                    </ul>
-                </div>`;
-                
-                // Adicionar aviso legal
-                reportHtml += `<p class="text-xs text-gray-500 mt-6">LEMBRETE: Esta é uma análise de triagem baseada em regras pré-definidas e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo.</p>`;
-                
-                return reportHtml;
-            }
-        };
-        
-        // Módulo de Armazenamento (sem alterações)
-        const StorageModule = {
-            async saveEncryptedData(key, data, password) {
-                try {
-                    const encrypted = await CryptoModule.encryptData(data, password);
-                    if (encrypted) {
-                        localStorage.setItem(key, JSON.stringify(encrypted));
-                        return true;
-                    }
-                    return false;
-                } catch (error) {
-                    console.error("Erro ao salvar dados criptografados:", error);
-                    return false;
-                }
-            },
-            
-            async loadEncryptedData(key, password) {
-                try {
-                    const encryptedStr = localStorage.getItem(key);
-                    if (!encryptedStr) return null;
-                    
-                    const encrypted = JSON.parse(encryptedStr);
-                    return await CryptoModule.decryptData(
-                        encrypted.encryptedData, 
-                        password, 
-                        encrypted.iv, 
-                        encrypted.salt
-                    );
-                } catch (error) {
-                    console.error("Erro ao carregar dados criptografados:", error);
-                    return null;
-                }
-            }
-        };
-        
-        // Módulo de API (RESTAURADO CONFORME SOLICITADO)
-        const ApiModule = {
-            async generateContent(prompt) {
-                try {
-                    // INSTRUÇÃO: Cole sua chave de API do Google AI Studio aqui.
-                    const apiKey = "COLE_SUA_CHAVE_DE_API_AQUI"; 
-                    
-                    if (apiKey === "COLE_SUA_CHAVE_DE_API_AQUI") {
-                        throw new Error("Chave de API não foi inserida. A análise online não pode prosseguir.");
-                    }
+        // ===================================================================================
+        // ARQUITETURA E CONFIGURAÇÃO
+        // ===================================================================================
 
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-                    
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    
-                    if (!response.ok) {
-                        const errorBody = await response.text();
-                        console.error("Corpo do erro da API:", errorBody);
-                        throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
-                    }
-                    
-                    const result = await response.json();
-                    if (!result.candidates || !result.candidates[0] || !result.candidates[0].content || !result.candidates[0].content.parts[0] || !result.candidates[0].content.parts[0].text) {
-                        console.error("Resposta inesperada da API:", result);
-                        throw new Error("Formato de resposta da API inválido.");
-                    }
-                    return result.candidates[0].content.parts[0].text;
+        const AppConfig = {
+            apiKey: "COLE_SUA_CHAVE_DE_API_AQUI", 
+            maxApiRetries: 3
+        };
 
-                } catch (error) {
-                    console.error("Falha na chamada da API:", error);
-                    throw error; // Propaga o erro para ativar o modo offline
-                }
-            }
+        const allLabFields = {
+            "hemoglobina": { group: "Série Vermelha", quick: true, range: { min: 1, max: 25 } }, "plaquetas": { group: "Coagulação", quick: true, range: { min: 1000, max: 1000000 } }, "leucocitos": { group: "Série Branca", quick: true, range: { min: 100, max: 100000 } }, "glicose": { group: "Bioquímica", quick: true, range: { min: 10, max: 1000 } }, "creatinina": { group: "Bioquímica", quick: true, range: { min: 0.1, max: 20 } }, "hematocrito": { group: "Série Vermelha", quick: false, range: { min: 10, max: 80 } }, "vcm": { group: "Série Vermelha", quick: false, range: { min: 50, max: 150 } }, "hcm": { group: "Série Vermelha", quick: false, range: { min: 15, max: 50 } }, "neutrofilos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } }, "linfocitos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } }, "monocitos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } }, "eosinofilos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } }, "bastonetes": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } }, "ast_tgo": { group: "Bioquímica", quick: false, range: { min: 1, max: 2000 } }, "alt_tgp": { group: "Bioquímica", quick: false, range: { min: 1, max: 2000 } }, "malaria_g_espessa": { group: "Doenças Infecciosas", quick: false }, "malaria_t_rapido": { group: "Doenças Infecciosas", quick: false }, "dengue_ns1": { group: "Doenças Infecciosas", quick: false }, "dengue_igm_igg": { group: "Doenças Infecciosas", quick: false }, "hiv_t_rapido": { group: "Doenças Infecciosas", quick: false }, "sifilis_t_rapido": { group: "Doenças Infecciosas", quick: false }, "hepatite_b_hbsag": { group: "Doenças Infecciosas", quick: false }, "hepatite_c_anti_hcv": { group: "Doenças Infecciosas", quick: false }, "tb_baciloscopia": { group: "Doenças Infecciosas", quick: false }, "chagas_sorologia": { group: "Doenças Infecciosas", quick: false }, "esquistossomose_ovos": { group: "Parasitologia", quick: false }, "helmintiases_fezes": { group: "Parasitologia", quick: false },
+        };
+
+        const translations = {
+            'pt-BR': { 'title': 'MISSIONLAB', 'header-title': 'MISSIONLAB ⚕️', 'header-subtitle': 'Ferramenta de apoio para triagem e análise de exames em campo.', 'progress-title': 'Progresso', 'progress-step-1': 'Passo 1 de 4: Dados do Paciente', 'progress-step-2': 'Passo 2 de 4: Exames', 'progress-step-3': 'Passo 3 de 4: Sinais e Sintomas', 'progress-step-4': 'Passo 4 de 4: Revisão e Análise', 'step1-title': 'Dados do Paciente', 'patient-name-label': 'Nome do Paciente', 'patient-age-label': 'Idade (em anos)', 'is-pediatric-label': 'Marque se for um paciente pediátrico (criança)', 'consent-title': 'Termo de Consentimento', 'consent-text': 'Declaro que as informações inseridas são para apoio à triagem e não substituem uma consulta médica. Os dados serão armazenados de forma segura apenas no seu dispositivo.', 'consent-agree': 'Li e Concordo', 'step2-title': 'Resultados dos Exames', 'mode-select-label': 'Selecione o modo de preenchimento:', 'fast-mode-btn': 'Triagem Rápida', 'full-mode-btn': 'Modo Completo', 'step3-title': 'Sinais, Sintomas e História', 'clinical-history-label': 'Descreva o que o paciente está sentindo', 'clinical-history-placeholder': 'Ex: Febre há 3 dias, dor de cabeça, sem apetite...', 'step4-title': 'Revisão e Análise', 'review-text': 'Por favor, revise os dados inseridos antes de enviar para análise.', 'analyze-btn': 'ANALISAR', 'prev-btn': 'Voltar', 'next-btn': 'Próximo', 'loading-text': 'Analisando dados... Por favor, aguarde.', 'footer-copyright': '&copy; 2024 MISSIONLAB.', 'terms-link': 'Termos de Uso', 'privacy-link': 'Política de Privacidade', 'install-btn': 'Instalar App', 'speak-patient-name': 'Digite o nome completo do paciente.', 'speak-patient-age': 'Digite a idade do paciente em anos.', 'speak-clinical-history': 'Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes.', 'report-pdf-btn': 'Gerar PDF', 'report-back-btn': 'Voltar para Edição', 'report-new-btn': 'Novo Atendimento (Início)', 'help-title': 'Como Usar a Ferramenta', 'help-step1': '<strong>Passo 1:</strong> Preencha os dados do paciente.', 'help-step2': '<strong>Passo 2:</strong> Escolha o modo de preenchimento e insira os resultados.', 'help-step3': '<strong>Passo 3:</strong> Descreva os sintomas do paciente.', 'help-step4': '<strong>Passo 4:</strong> Revise tudo e clique em "ANALISAR".', 'help-alert-title': 'Alerta Importante', 'help-alert-text': 'Os valores de referência dos exames podem variar com a região, altitude e clima. Sempre compare com os valores do laboratório local, se possível.', 'terms-title': 'Aviso Legal e Termos de Uso', 'privacy-title': 'Política de Privacidade', 'holistic-care-title': 'Apoio Emocional e Espiritual (Opcional)', 'stress-level-label': 'Nível de estresse (0 a 10)', 'emotional-state-label': 'Como tem se sentido emocionalmente?', 'prayer-request-label': 'Gostaria de receber uma oração ou palavra de encorajamento?', "hemoglobina": { "label": "Hemoglobina (g/dL)", "explanation": "É uma proteína do sangue que carrega oxigênio. Se estiver baixa, pode indicar anemia (fraqueza, cansaço)." }, "plaquetas": { "label": "Plaquetas (/mm³)", "explanation": "São células que ajudam o sangue a coagular. Baixas aumentam risco de sangramento." }, "leucocitos": { "label": "Leucócitos (/mm³)", "explanation": "Glóbulos brancos que defendem o corpo contra infecções." }, "glicose": { "label": "Glicemia (mg/dL)", "explanation": "Mede o açúcar no sangue. Alto pode ser diabetes, baixo pode causar desmaio." }, "creatinina": { "label": "Creatinina (mg/dL)", "explanation": "Avalia a função dos rins." }, "hematocrito": { "label": "Hematócrito (%)", "explanation": "Mostra a porcentagem de sangue formada por glóbulos vermelhos." }, "vcm": { "label": "VCM (fL)", "explanation": "Mostra o tamanho médio das células vermelhas. Ajuda a descobrir o tipo de anemia." }, "hcm": { "label": "HCM (pg)", "explanation": "Mostra quanto de hemoglobina tem cada glóbulo vermelho." }, "neutrofilos": { "label": "Neutrófilos (%)", "explanation": "Tipo de leucócito que aumenta em infecções bacterianas." }, "linfocitos": { "label": "Linfócitos (%)", "explanation": "Outro tipo de glóbulo branco, aumenta em infecções virais." }, "monocitos": { "label": "Monócitos (%)", "explanation": "Defendem o corpo, aumentam em infecções e inflamações prolongadas." }, "eosinofilos": { "label": "Eosinófilos (%)", "explanation": "Aumentam em alergias e parasitoses (vermes)." }, "bastonetes": { "label": "Bastonetes (%)", "explanation": "Forma jovem dos neutrófilos, aumentam em infecções graves." }, "ast_tgo": { "label": "AST/TGO (U/L)", "explanation": "Enzima do fígado. Alta pode indicar problemas no fígado, como hepatite." }, "alt_tgp": { "label": "ALT/TGP (U/L)", "explanation": "Enzima do fígado, mais específica que a TGO. Alta pode indicar problemas no fígado." }, "malaria_g_espessa": { "label": "Malária (Gota Espessa)", "explanation": "Pesquisa de parasitas no sangue para saber se a pessoa está com malária." }, "malaria_t_rapido": { "label": "Malária (Teste Rápido)", "explanation": "Detecta antígenos do parasita no sangue, resultado em poucos minutos." }, "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detecta infecção recente, antes do corpo produzir anticorpos." }, "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Mostra contato recente (IgM) ou antigo (IgG) com o vírus." }, "hiv_t_rapido": { "label": "HIV (Teste Rápido)", "explanation": "Detecta anticorpos contra o HIV. Positivo precisa de confirmação." }, "sifilis_t_rapido": { "label": "Sífilis (Teste Rápido/VDRL)", "explanation": "Mostra se a pessoa tem ou já teve sífilis." }, "hepatite_b_hbsag": { "label": "Hepatite B (HBsAg)", "explanation": "Mostra infecção ativa pelo vírus da Hepatite B." }, "hepatite_c_anti_hcv": { "label": "Hepatite C (Anti-HCV)", "explanation": "Mostra contato com o vírus da Hepatite C." }, "tb_baciloscopia": { "label": "Tuberculose (Baciloscopia)", "explanation": "Procura o bacilo da tuberculose em secreção do pulmão." }, "chagas_sorologia": { "label": "Chagas (Sorologia)", "explanation": "Mostra se a pessoa está ou já esteve infectada pelo Trypanosoma cruzi." }, "esquistossomose_ovos": { "label": "Esquistossomose (Ovos)", "explanation": "Identifica ovos do parasita responsável pela esquistossomose nas fezes/urina." }, "helmintiases_fezes": { "label": "Helmintíases (Fezes)", "explanation": "Pesquisa de ovos e parasitas de vermes intestinais." },
+            },
+            'es': { 'title': 'MISSIONLAB', 'header-title': 'MISSIONLAB ⚕️', 'header-subtitle': 'Herramienta de apoyo para triaje y análisis de exámenes en campo.', 'progress-title': 'Progreso', 'progress-step-1': 'Paso 1 de 4: Datos del Paciente', 'progress-step-2': 'Paso 2 de 4: Exámenes', 'progress-step-3': 'Paso 3 de 4: Signos y Síntomas', 'progress-step-4': 'Paso 4 de 4: Revisión y Análisis', 'step1-title': 'Datos del Paciente', 'patient-name-label': 'Nombre del Paciente', 'patient-age-label': 'Edad (en años)', 'is-pediatric-label': 'Marque si es un paciente pediátrico (niño/a)', 'consent-title': 'Término de Consentimiento', 'consent-text': 'Declaro que la información ingresada es para apoyo al triaje y no reemplaza una consulta médica. Los datos se almacenarán de forma segura solo en su dispositivo.', 'consent-agree': 'Leí y estoy de acuerdo', 'step2-title': 'Resultados de los Exámenes', 'mode-select-label': 'Seleccione el modo de ingreso:', 'fast-mode-btn': 'Triaje Rápido', 'full-mode-btn': 'Modo Completo', 'step3-title': 'Signos, Síntomas e Historia', 'clinical-history-label': 'Describa lo que el paciente está sintiendo', 'clinical-history-placeholder': 'Ej: Fiebre hace 3 días, dolor de cabeza, sin apetito...', 'step4-title': 'Revisión y Análisis', 'review-text': 'Por favor, revise los datos ingresados antes de enviar para análisis.', 'analyze-btn': 'ANALIZAR', 'prev-btn': 'Volver', 'next-btn': 'Siguiente', 'loading-text': 'Analizando datos... Por favor, espere.', 'footer-copyright': '&copy; 2024 MISSIONLAB.', 'terms-link': 'Términos de Uso', 'privacy-link': 'Política de Privacidad', 'install-btn': 'Instalar App', 'speak-patient-name': 'Ingrese el nombre completo del paciente.', 'speak-patient-age': 'Ingrese la edad del paciente en años.', 'speak-clinical-history': 'Describa aquí lo que el paciente siente, desde cuándo y otra información importante.', 'report-pdf-btn': 'Generar PDF', 'report-back-btn': 'Volver a Editar', 'report-new-btn': 'Nueva Consulta (Inicio)', 'help-title': 'Cómo Usar la Herramienta', 'help-step1': '<strong>Paso 1:</strong> Complete los datos del paciente.', 'help-step2': '<strong>Paso 2:</strong> Elija el modo de ingreso e ingrese los resultados.', 'help-step3': '<strong>Paso 3:</strong> Describa los síntomas del paciente.', 'help-step4': '<strong>Paso 4:</strong> Revise todo y haga clic en "ANALIZAR".', 'help-alert-title': 'Alerta Importante', 'help-alert-text': 'Los valores de referencia de los exámenes pueden variar según la región, altitud y clima. Siempre compare con los valores del laboratorio local, si es posible.', 'terms-title': 'Aviso Legal y Términos de Uso', 'privacy-title': 'Política de Privacidad', 'holistic-care-title': 'Apoyo Emocional y Espiritual (Opcional)', 'stress-level-label': 'Nivel de estrés (0 a 10)', 'emotional-state-label': '¿Cómo se ha sentido emocionalmente?', 'prayer-request-label': '¿Le gustaría recibir una oración o palabra de aliento?', "hemoglobina": { "label": "Hemoglobina (g/dL)", "explanation": "Es una proteína en la sangre que transporta oxígeno. Si está baja, puede indicar anemia (debilidad, cansancio)." }, "plaquetas": { "label": "Plaquetas (/mm³)", "explanation": "Son células que ayudan a la sangre a coagular. Bajas aumentan el riesgo de sangrado." }, "leucocitos": { "label": "Leucocitos (/mm³)", "explanation": "Glóbulos blancos que defienden el cuerpo contra infecciones." }, "glicose": { "label": "Glucemia (mg/dL)", "explanation": "Mide el azúcar en la sangre. Alto puede ser diabetes, bajo puede causar desmayos." }, "creatinina": { "label": "Creatinina (mg/dL)", "explanation": "Evalúa la función de los riñones." }, "hematocrito": { "label": "Hematocrito (%)", "explanation": "Muestra el porcentaje de sangre composto por glóbulos rojos." }, "vcm": { "label": "VCM (fL)", "explanation": "Muestra el tamaño promedio de los glóbulos rojos. Ayuda a descubrir el tipo de anemia." }, "hcm": { "label": "HCM (pg)", "explanation": "Muestra cuánta hemoglobina hay en cada glóbulo rojo." }, "neutrofilos": { "label": "Neutrófilos (%)", "explanation": "Tipo de leucocito que aumenta en infecciones bacterianas." }, "linfocitos": { "label": "Linfocitos (%)", "explanation": "Otro tipo de glóbulo blanco, aumenta en infecciones virales." }, "monocitos": { "label": "Monocitos (%)", "explanation": "Defienden el cuerpo, aumentan en infecciones e inflamaciones prolongadas." }, "eosinofilos": { "label": "Eosinófilos (%)", "explanation": "Aumentan en alergias y parasitosis (gusanos)." }, "bastonetes": { "label": "Cayados/Bandas (%)", "explanation": "Forma joven de los neutrófilos, aumentan en infecciones graves." }, "ast_tgo": { "label": "AST/TGO (U/L)", "explanation": "Enzima del hígado. Alta puede indicar problemas en el hígado, como hepatitis." }, "alt_tgp": { "label": "ALT/TGP (U/L)", "explanation": "Enzima del hígado, más específica que la TGO. Alta puede indicar problemas en el hígado." }, "malaria_g_espessa": { "label": "Malaria (Gota Gruesa)", "explanation": "Búsqueda de parásitos en la sangre para saber si la persona tiene malaria." }, "malaria_t_rapido": { "label": "Malaria (Test Rápido)", "explanation": "Detecta antígenos del parásito en la sangre, resultado en pocos minutos." }, "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detecta infección reciente, antes de que el cuerpo produzca anticuerpos." }, "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Muestra contacto reciente (IgM) o antiguo (IgG) con el virus." }, "hiv_t_rapido": { "label": "VIH (Test Rápido)", "explanation": "Detecta anticuerpos contra el VIH. Positivo necesita confirmación." }, "sifilis_t_rapido": { "label": "Sífilis (Test Rápido/VDRL)", "explanation": "Muestra si la persona tiene o ha tenido sífilis." }, "hepatite_b_hbsag": { "label": "Hepatitis B (HBsAg)", "explanation": "Muestra infección activa por el virus de la Hepatitis B." }, "hepatite_c_anti_hcv": { "label": "Hepatitis C (Anti-HCV)", "explanation": "Muestra contacto con el virus de la Hepatitis C." }, "tb_baciloscopia": { "label": "Tuberculosis (Baciloscopía)", "explanation": "Busca el bacilo de la tuberculosis en la secreción del pulmón." }, "chagas_sorologia": { "label": "Chagas (Serología)", "explanation": "Muestra si la persona está o ha estado infectada por Trypanosoma cruzi." }, "esquistossomose_ovos": { "label": "Esquistosomiasis (Huevos)", "explanation": "Identifica huevos del parásito responsable de la esquistosomiasis en heces/orina." }, "helmintiases_fezes": { "label": "Helmintiasis (Heces)", "explanation": "Búsqueda de huevos y parásitos de gusanos intestinales." },
+            },
+            'en': { 'title': 'MISSIONLAB', 'header-title': 'MISSIONLAB ⚕️', 'header-subtitle': 'Support tool for triage and lab analysis in the field.', 'progress-title': 'Progress', 'progress-step-1': 'Step 1 of 4: Patient Data', 'progress-step-2': 'Step 2 of 4: Lab Results', 'progress-step-3': 'Step 3 of 4: Signs & Symptoms', 'progress-step-4': 'Step 4 of 4: Review & Analyze', 'step1-title': 'Patient Data', 'patient-name-label': 'Patient Name', 'patient-age-label': 'Age (in years)', 'is-pediatric-label': 'Check if the patient is a child', 'consent-title': 'Consent Form', 'consent-text': 'I declare that the information provided is for triage support and does not replace a medical consultation. The data will be stored securely only on your device.', 'consent-agree': 'I have read and agree', 'step2-title': 'Lab Results', 'mode-select-label': 'Select entry mode:', 'fast-mode-btn': 'Quick Triage', 'full-mode-btn': 'Full Mode', 'step3-title': 'Signs, Symptoms & History', 'clinical-history-label': 'Describe what the patient is feeling', 'clinical-history-placeholder': 'e.g., Fever for 3 days, headache, no appetite...', 'step4-title': 'Review & Analyze', 'review-text': 'Please review the entered data before submitting for analysis.', 'analyze-btn': 'ANALYZE', 'prev-btn': 'Back', 'next-btn': 'Next', 'loading-text': 'Analyzing data... Please wait.', 'footer-copyright': '&copy; 2024 MISSIONLAB.', 'terms-link': 'Terms of Use', 'privacy-link': 'Privacy Policy', 'install-btn': 'Install App', 'speak-patient-name': 'Enter the patient\'s full name.', 'speak-patient-age': 'Enter the patient\'s age in years.', 'speak-clinical-history': 'Describe what the patient is feeling, for how long, and other important information.', 'report-pdf-btn': 'Generate PDF', 'report-back-btn': 'Back to Edit', 'report-new-btn': 'New Consultation (Start)', 'help-title': 'How to Use This Tool', 'help-step1': '<strong>Step 1:</strong> Fill in the patient\'s data.', 'help-step2': '<strong>Step 2:</strong> Choose the entry mode and enter the results.', 'help-step3': '<strong>Step 3:</strong> Describe the patient\'s symptoms.', 'help-step4': '<strong>Step 4:</strong> Review everything and click "ANALYZE".', 'help-alert-title': 'Important Alert', 'help-alert-text': 'Reference values for lab tests can vary by region, altitude, and climate. Always compare with local lab values if possible.', 'terms-title': 'Disclaimer and Terms of Use', 'privacy-title': 'Privacy Policy', 'holistic-care-title': 'Emotional & Spiritual Support (Optional)', 'stress-level-label': 'Stress Level (0 to 10)', 'emotional-state-label': 'How have you been feeling emotionally?', 'prayer-request-label': 'Would you like to receive prayer or a word of encouragement?', "hemoglobina": { "label": "Hemoglobin (g/dL)", "explanation": "A protein in the blood that carries oxygen. If low, it may indicate anemia (weakness, fatigue)." }, "plaquetas": { "label": "Platelets (/mm³)", "explanation": "Cells that help blood clot. Low levels increase bleeding risk." }, "leucocitos": { "label": "Leukocytes (/mm³)", "explanation": "White blood cells that defend the body against infections." }, "glicose": { "label": "Glucose (mg/dL)", "explanation": "Measures blood sugar. High could be diabetes, low can cause fainting." }, "creatinina": { "label": "Creatinine (mg/dL)", "explanation": "Assesses kidney function." }, "hematocrito": { "label": "Hematocrit (%)", "explanation": "Shows the percentage of blood composed of red blood cells." }, "vcm": { "label": "MCV (fL)", "explanation": "Shows the average size of red blood cells. Helps determine the type of anemia." }, "hcm": { "label": "MCH (pg)", "explanation": "Shows how much hemoglobin is in each red blood cell." }, "neutrofilos": { "label": "Neutrophils (%)", "explanation": "A type of white blood cell that increases in bacterial infections." }, "linfocitos": { "label": "Lymphocytes (%)", "explanation": "Another type of white blood cell, increases in viral infections." }, "monocitos": { "label": "Monocytes (%)", "explanation": "Defend the body, increase in prolonged infections and inflammations." }, "eosinofilos": { "label": "Eosinophils (%)", "explanation": "Increase in allergies and parasitic infections (worms)." }, "bastonetes": { "label": "Bands (%)", "explanation": "Young form of neutrophils, increase in severe infections." }, "ast_tgo": { "label": "AST/GOT (U/L)", "explanation": "A liver enzyme. High levels can indicate liver problems like hepatitis." }, "alt_tgp": { "label": "ALT/GPT (U/L)", "explanation": "A liver enzyme, more specific than AST. High levels can indicate liver problems." }, "malaria_g_espessa": { "label": "Malaria (Thick Smear)", "explanation": "Searches for parasites in the blood to determine if the person has malaria." }, "malaria_t_rapido": { "label": "Malaria (Rapid Test)", "explanation": "Detects parasite antigens in the blood, with results in minutes." }, "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detects recent infection, before the body produces antibodies." }, "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Shows recent (IgM) or past (IgG) contact with the virus." }, "hiv_t_rapido": { "label": "HIV (Rapid Test)", "explanation": "Detects antibodies against HIV. A positive result needs confirmation." }, "sifilis_t_rapido": { "label": "Syphilis (Rapid Test/VDRL)", "explanation": "Shows if the person has or has had syphilis." }, "hepatite_b_hbsag": { "label": "Hepatitis B (HBsAg)", "explanation": "Shows active infection with the Hepatitis B virus." }, "hepatite_c_anti_hcv": { "label": "Hepatitis C (Anti-HCV)", "explanation": "Shows contact with the Hepatitis C virus." }, "tb_baciloscopia": { "label": "Tuberculosis (Sputum Smear)", "explanation": "Looks for the tuberculosis bacillus in lung secretions." }, "chagas_sorologia": { "label": "Chagas (Serology)", "explanation": "Shows if the person is or has been infected with Trypanosoma cruzi." }, "esquistossomose_ovos": { "label": "Schistosomiasis (Ova)", "explanation": "Identifies eggs of the parasite responsible for schistosomiasis in stool/urine." }, "helmintiases_fezes": { "label": "Helminthiasis (Stool)", "explanation": "Searches for eggs and parasites of intestinal worms." },
+            },
         };
         
-        // Módulo de PDF (sem alterações)
-        const PDFModule = {
-            async generatePdf(reportHtml, patientName) {
-                const { jsPDF } = window.jspdf;
-                const reportElement = document.getElementById('report-content-for-pdf');
-                
-                try {
-                    const canvas = await html2canvas(reportElement, {
-                        scale: 2,
-                        useCORS: true,
-                        windowWidth: reportElement.scrollWidth,
-                        windowHeight: reportElement.scrollHeight
-                    });
-                    
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgWidth = 210; // A4 width in mm
-                    const pageHeight = 295; // A4 height in mm
-                    const imgHeight = canvas.height * imgWidth / canvas.width;
-                    let heightLeft = imgHeight;
-                    
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    let position = 0;
-                    
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                    
-                    while (heightLeft >= 0) {
-                        position = heightLeft - imgHeight;
-                        pdf.addPage();
-                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                        heightLeft -= pageHeight;
-                    }
-                    
-                    pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`);
-                    
-                    UIModule.showModal(`
-                        <h2 class="text-xl font-bold mb-2">PDF Gerado com Sucesso!</h2>
-                        <p class="text-sm"><strong>Aviso de Segurança:</strong> Lembre-se de não compartilhar arquivos com dados de pacientes em redes de Wi-Fi públicas ou inseguras.</p>
-                    `);
-                } catch (error) {
-                    console.error("Erro ao gerar PDF:", error);
-                    UIModule.showModal(`
-                        <h2 class="text-xl font-bold mb-2 text-red-600">Erro ao Gerar PDF</h2>
-                        <p>Não foi possível gerar o PDF. Tente novamente mais tarde.</p>
-                    `);
-                }
-            }
-        };
+        // ===================================================================================
+        // MÓDULOS DE FUNCIONALIDADE
+        // ===================================================================================
         
-        // Módulo de Internacionalização (sem alterações)
-        const I18nModule = {
-            setLanguage(lang) {
-                document.documentElement.lang = lang;
-                localStorage.setItem('preferredLanguage', lang);
-                const t = translations[lang] || translations['pt-BR'];
-                
-                document.querySelectorAll('[data-key]').forEach(el => {
-                    const key = el.getAttribute('data-key');
-                    if (t[key]) {
-                        if (el.tagName === 'TEXTAREA' && el.hasAttribute('placeholder')) {
-                            el.placeholder = t[key];
-                        } else if(el.hasAttribute('data-text')) {
-                            el.dataset.text = t[key];
-                        } else {
-                            el.innerHTML = t[key];
-                        }
-                    }
-                });
-                
-                // Re-renderizar campos de exames com o novo idioma
-                renderLabFields(document.querySelector('#fast-mode-btn').classList.contains('border-blue-600'));
-            }
-        };
+        const CryptoModule = { async encryptData(data, password) { try { const encoder = new TextEncoder(); const dataBuffer = encoder.encode(JSON.stringify(data)); const passwordBuffer = encoder.encode(password); const importedKey = await crypto.subtle.importKey('raw', passwordBuffer, { name: 'PBKDF2' }, false, ['deriveKey']); const salt = crypto.getRandomValues(new Uint8Array(16)); const derivedKey = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' }, importedKey, { name: 'AES-GCM', length: 256 }, false, ['encrypt']); const iv = crypto.getRandomValues(new Uint8Array(12)); const encryptedData = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, derivedKey, dataBuffer); return { encryptedData: Array.from(new Uint8Array(encryptedData)), iv: Array.from(iv), salt: Array.from(salt) }; } catch (error) { console.error("Erro na criptografia:", error); return null; } }, async decryptData(encryptedData, password, iv, salt) { try { const encoder = new TextEncoder(); const passwordBuffer = encoder.encode(password); const importedKey = await crypto.subtle.importKey('raw', passwordBuffer, { name: 'PBKDF2' }, false, ['deriveKey']); const derivedKey = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: new Uint8Array(salt), iterations: 100000, hash: 'SHA-256' }, importedKey, { name: 'AES-GCM', length: 256 }, false, ['decrypt']); const decryptedData = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(iv) }, derivedKey, new Uint8Array(encryptedData)); const decoder = new TextDecoder(); return JSON.parse(decoder.decode(decryptedData)); } catch (error) { console.error("Erro na descriptografia:", error); return null; } } };
+        const ValidationModule = { validateStep(step) { const inputs = document.querySelectorAll(`#step-${step} [required]`); for (let input of inputs) { if ((input.type === 'checkbox' && !input.checked) || (input.type !== 'checkbox' && !input.value.trim())) { const fieldName = input.labels[0].textContent.replace(' *', ''); this.showValidationError(`Por favor, preencha o campo obrigatório: "${fieldName}".`); input.focus(); return false; } } return true; }, validateFieldRanges() { const warnings = []; const formData = new FormData(form); formData.forEach((value, key) => { const field = allLabFields[key]; if (field && field.range && value.trim() !== '') { const numValue = parseFloat(value.replace(',', '.')); if (!isNaN(numValue)) { if (numValue < field.range.min || numValue > field.range.max) { const lang = document.documentElement.lang || 'pt-BR'; const label = translations[lang][key].label; warnings.push(`- ${label}: ${value}`); } } } }); return warnings; }, showValidationError(message) { const errorElement = document.getElementById('error-message'); errorElement.textContent = message; errorElement.classList.remove('hidden'); setTimeout(() => { errorElement.classList.add('hidden'); }, 5000); } };
+        const UIModule = { updateConnectionStatus() { const statusElement = document.getElementById('connection-status'); const statusText = document.getElementById('status-text'); if (navigator.onLine) { statusElement.className = 'fixed top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800'; statusText.textContent = 'Online'; } else { statusElement.className = 'fixed top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800'; statusText.textContent = 'Offline'; } statusElement.classList.remove('hidden'); setTimeout(() => { statusElement.classList.add('hidden'); }, 3000); }, showStep(step) { document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active')); document.getElementById(`step-${step}`).classList.add('active'); const progressBar = document.getElementById('progress-bar'); progressBar.style.width = `${(step / totalSteps) * 100}%`; progressBar.setAttribute('aria-valuenow', (step / totalSteps) * 100); const progressText = document.getElementById('progress-text'); const lang = document.documentElement.lang || 'pt-BR'; progressText.dataset.key = `progress-step-${step}`; progressText.textContent = translations[lang][`progress-step-${step}`]; prevBtn.style.display = step === 1 ? 'none' : 'inline-block'; nextBtn.style.display = step === totalSteps ? 'none' : 'inline-block'; if (step === totalSteps) { this.updateReviewContent(); } }, updateReviewContent() { const reviewContent = document.getElementById('review-content'); const formData = new FormData(form); let html = '<ul>'; formData.forEach((value, key) => { const el = form.elements[key]; if (value && el && el.labels) { const label = el.labels[0] ? el.labels[0].textContent.replace(' *', '') : key; if(key !== 'consent-check') { html += `<li class="py-1"><strong class="font-semibold">${label}:</strong> ${value}</li>`; } } }); html += `<li><strong class="font-semibold">Paciente Pediátrico:</strong> ${document.getElementById('is-pediatric').checked ? 'Sim' : 'Não'}</li>`; html += '</ul>'; reviewContent.innerHTML = html; }, showModal(content, title = "Informação") { const modal = document.getElementById('modal'); const modalContent = document.getElementById('modal-content'); const modalTitle = document.getElementById('modal-title'); modalTitle.textContent = title; modalContent.innerHTML = content; modal.classList.remove('hidden'); const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'); if (focusableElements.length > 0) { focusableElements[0].focus(); } }, hideModal() { const modal = document.getElementById('modal'); modal.classList.add('hidden'); } };
+        const OfflineModule = { offlineRules: { anemia: { condition: (data) => { const hemo = parseFloat(data.hemoglobina?.replace(',', '.')); const age = parseInt(data['patient-age']); if (!hemo || !age) return false; if (age < 12) { return hemo < 11.5; } else { return hemo < 12; } }, message: "Possível anemia detectada. Recomenda-se avaliação complementar." }, infection: { condition: (data) => { const leuko = parseFloat(data.leucocitos?.replace(',', '.')); return leuko && leuko > 11000; }, message: "Leucocitose detectada. Pode indicar processo infeccioso." }, thrombocytopenia: { condition: (data) => { const plaquetas = parseFloat(data.plaquetas?.replace(',', '.')); return plaquetas && plaquetas < 150000; }, message: "Trombocitopenia detectada. Atenção para risco de sangramentos." }, hyperglycemia: { condition: (data) => { const glicose = parseFloat(data.glicose?.replace(',', '.')); return glicose && glicose > 126; }, message: "Hiperglicemia detectada. Possível diabetes." }, renalImpairment: { condition: (data) => { const creatinina = parseFloat(data.creatinina?.replace(',', '.')); return creatinina && creatinina > 1.2; }, message: "Creatinina elevada. Possível comprometimento renal." } }, generateEnhancedOfflineReport(labData) { const findings = []; for (const [conditionName, rule] of Object.entries(this.offlineRules)) { if (rule.condition(labData)) { findings.push(rule.message); } } let reportHtml = `<div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-6" role="alert"><p class="font-bold">Modo Offline</p><p>Não foi possível conectar à IA. Este é um relatório de triagem básico gerado localmente.</p></div>`; reportHtml += `<h2 class="text-2xl font-bold text-gray-800 mb-4">Análise Offline</h2>`; if (findings.length > 0) { reportHtml += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6"><h3 class="font-bold mb-2">Principais Achados:</h3><ul>${findings.map(f => `<li>- ${f}</li>`).join('')}</ul></div>`; } else { reportHtml += `<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md mb-6"><p>Nenhum achado significativo detectado nos exames fornecidos com base nas regras de triagem offline.</p></div>`; } reportHtml += `<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md"><h3 class="font-bold mb-2">Recomendações Gerais:</h3><ul class="list-disc pl-5"><li>Manter o paciente em observação.</li><li>Garantir hidratação adequada.</li><li>Procurar assistência médica se os sintomas piorarem ou não melhorarem.</li></ul></div>`; reportHtml += `<p class="text-xs text-gray-500 mt-6">LEMBRETE: Esta é uma análise de triagem baseada em regras pré-definidas e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo.</p>`; return reportHtml; } };
+        const ApiModule = { async fetchWithRetry(url, options, retries) { try { const response = await fetch(url, options); if (!response.ok) { if (response.status >= 400 && response.status < 500) { const errorBody = await response.text(); console.error("Erro do cliente na API:", response.status, errorBody); throw new Error(`Erro na API: ${response.status}. Verifique sua chave e os dados enviados.`); } throw new Error(`Erro de rede ou servidor: ${response.status}`); } return await response.json(); } catch (error) { if (retries > 0) { const delay = Math.pow(2, AppConfig.maxApiRetries - retries) * 1000; console.warn(`Tentativa de API falhou. Tentando novamente em ${delay/1000}s... (${retries-1} tentativas restantes)`); await new Promise(resolve => setTimeout(resolve, delay)); return this.fetchWithRetry(url, options, retries - 1); } else { console.error("Todas as tentativas de API falharam.", error); throw error; } } }, async generateContent(prompt) { const { apiKey } = AppConfig; if (apiKey === "COLE_SUA_CHAVE_DE_API_AQUI") { throw new Error("Chave de API não foi inserida. A análise online não pode prosseguir."); } const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`; const payload = { contents: [{ parts: [{ text: prompt }] }] }; try { const result = await this.fetchWithRetry(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }, AppConfig.maxApiRetries); if (!result.candidates?.[0]?.content?.parts?.[0]?.text) { console.error("Resposta inesperada da API:", result); throw new Error("Formato de resposta da API inválido."); } return result.candidates[0].content.parts[0].text; } catch (error) { throw error; } } };
+        const PDFModule = { async generatePdf(reportHtml, patientName) { const { jsPDF } = window.jspdf; const reportElement = document.getElementById('report-content-for-pdf'); try { const canvas = await html2canvas(reportElement, { scale: 2, useCORS: true, windowWidth: reportElement.scrollWidth, windowHeight: reportElement.scrollHeight }); const imgData = canvas.toDataURL('image/png'); const imgWidth = 210; const pageHeight = 295; const imgHeight = canvas.height * imgWidth / canvas.width; let heightLeft = imgHeight; const pdf = new jsPDF('p', 'mm', 'a4'); let position = 0; pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight); heightLeft -= pageHeight; while (heightLeft >= 0) { position = heightLeft - imgHeight; pdf.addPage(); pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight); heightLeft -= pageHeight; } pdf.save(`relatorio_${patientName.replace(/\s/g, '_')}.pdf`); UIModule.showModal(`<h2 class="text-xl font-bold mb-2">PDF Gerado com Sucesso!</h2><p class="text-sm"><strong>Aviso de Segurança:</strong> Lembre-se de não compartilhar arquivos com dados de pacientes em redes de Wi-Fi públicas ou inseguras.</p>`); } catch (error) { console.error("Erro ao gerar PDF:", error); UIModule.showModal(`<h2 class="text-xl font-bold mb-2 text-red-600">Erro ao Gerar PDF</h2><p>Não foi possível gerar o PDF. Tente novamente mais tarde.</p>`); } } };
+        const I18nModule = { setLanguage(lang) { document.documentElement.lang = lang; localStorage.setItem('preferredLanguage', lang); const t = translations[lang] || translations['pt-BR']; document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key]) { if (el.tagName === 'TEXTAREA' && el.hasAttribute('placeholder')) { el.placeholder = t[key]; } else if(el.hasAttribute('data-text')) { el.dataset.text = t[key]; } else { el.innerHTML = t[key]; } } }); renderLabFields(document.querySelector('#fast-mode-btn').classList.contains('border-blue-600')); } };
+
+        // ===================================================================================
+        // LÓGICA PRINCIPAL DA APLICAÇÃO
+        // ===================================================================================
         
-        // --- VARIÁVEIS GLOBAIS ---
         let currentStep = 1;
         const totalSteps = 4;
         const form = document.getElementById('lab-form');
@@ -725,685 +287,49 @@
         const installBtn = document.getElementById('install-app-btn');
         let deferredPrompt;
         
-        // --- DADOS (sem alterações) ---
-        const allLabFields = {
-            // Triagem Rápida
-            "hemoglobina": { group: "Série Vermelha", quick: true, range: { min: 1, max: 25 } },
-            "plaquetas": { group: "Coagulação", quick: true, range: { min: 1000, max: 1000000 } },
-            "leucocitos": { group: "Série Branca", quick: true, range: { min: 100, max: 100000 } },
-            "glicose": { group: "Bioquímica", quick: true, range: { min: 10, max: 1000 } },
-            "creatinina": { group: "Bioquímica", quick: true, range: { min: 0.1, max: 20 } },
-            // Modo Completo
-            "hematocrito": { group: "Série Vermelha", quick: false, range: { min: 10, max: 80 } },
-            "vcm": { group: "Série Vermelha", quick: false, range: { min: 50, max: 150 } },
-            "hcm": { group: "Série Vermelha", quick: false, range: { min: 15, max: 50 } },
-            "neutrofilos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
-            "linfocitos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
-            "monocitos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
-            "eosinofilos": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
-            "bastonetes": { group: "Série Branca", quick: false, range: { min: 0, max: 100 } },
-            "ast_tgo": { group: "Bioquímica", quick: false, range: { min: 1, max: 2000 } },
-            "alt_tgp": { group: "Bioquímica", quick: false, range: { min: 1, max: 2000 } },
-            "malaria_g_espessa": { group: "Doenças Infecciosas", quick: false },
-            "malaria_t_rapido": { group: "Doenças Infecciosas", quick: false },
-            "dengue_ns1": { group: "Doenças Infecciosas", quick: false },
-            "dengue_igm_igg": { group: "Doenças Infecciosas", quick: false },
-            "hiv_t_rapido": { group: "Doenças Infecciosas", quick: false },
-            "sifilis_t_rapido": { group: "Doenças Infecciosas", quick: false },
-            "hepatite_b_hbsag": { group: "Doenças Infecciosas", quick: false },
-            "hepatite_c_anti_hcv": { group: "Doenças Infecciosas", quick: false },
-            "tb_baciloscopia": { group: "Doenças Infecciosas", quick: false },
-            "chagas_sorologia": { group: "Doenças Infecciosas", quick: false },
-            "esquistossomose_ovos": { group: "Parasitologia", quick: false },
-            "helmintiases_fezes": { group: "Parasitologia", quick: false },
-        };
-        
-        const translations = {
-            'pt-BR': {
-                'title': 'MISSIONLAB',
-                'header-title': 'MISSIONLAB ⚕️',
-                'header-subtitle': 'Ferramenta de apoio para triagem e análise de exames em campo.',
-                'progress-title': 'Progresso',
-                'progress-step-1': 'Passo 1 de 4: Dados do Paciente',
-                'progress-step-2': 'Passo 2 de 4: Exames',
-                'progress-step-3': 'Passo 3 de 4: Sinais e Sintomas',
-                'progress-step-4': 'Passo 4 de 4: Revisão e Análise',
-                'step1-title': 'Dados do Paciente',
-                'patient-name-label': 'Nome do Paciente',
-                'patient-age-label': 'Idade (em anos)',
-                'is-pediatric-label': 'Marque se for um paciente pediátrico (criança)',
-                'consent-title': 'Termo de Consentimento',
-                'consent-text': 'Declaro que as informações inseridas são para apoio à triagem e não substituem uma consulta médica. Os dados serão armazenados de forma segura apenas no seu dispositivo.',
-                'consent-agree': 'Li e Concordo',
-                'step2-title': 'Resultados dos Exames',
-                'mode-select-label': 'Selecione o modo de preenchimento:',
-                'fast-mode-btn': 'Triagem Rápida',
-                'full-mode-btn': 'Modo Completo',
-                'step3-title': 'Sinais, Sintomas e História',
-                'clinical-history-label': 'Descreva o que o paciente está sentindo',
-                'clinical-history-placeholder': 'Ex: Febre há 3 dias, dor de cabeça, sem apetite...',
-                'step4-title': 'Revisão e Análise',
-                'review-text': 'Por favor, revise os dados inseridos antes de enviar para análise.',
-                'analyze-btn': 'ANALISAR',
-                'prev-btn': 'Voltar',
-                'next-btn': 'Próximo',
-                'loading-text': 'Analisando dados... Por favor, aguarde.',
-                'footer-copyright': '&copy; 2024 MISSIONLAB.',
-                'terms-link': 'Termos de Uso',
-                'privacy-link': 'Política de Privacidade',
-                'install-btn': 'Instalar App',
-                'speak-patient-name': 'Digite o nome completo do paciente.',
-                'speak-patient-age': 'Digite a idade do paciente em anos.',
-                'speak-clinical-history': 'Descreva aqui o que o paciente está sentindo, há quanto tempo, e outras informações importantes.',
-                'report-pdf-btn': 'Gerar PDF',
-                'report-back-btn': 'Voltar para Edição',
-                'report-new-btn': 'Novo Atendimento (Início)',
-                'help-title': 'Como Usar a Ferramenta',
-                'help-step1': '<strong>Passo 1:</strong> Preencha os dados do paciente.',
-                'help-step2': '<strong>Passo 2:</strong> Escolha o modo de preenchimento e insira os resultados.',
-                'help-step3': '<strong>Passo 3:</strong> Descreva os sintomas do paciente.',
-                'help-step4': '<strong>Passo 4:</strong> Revise tudo e clique em "ANALISAR".',
-                'help-alert-title': 'Alerta Importante',
-                'help-alert-text': 'Os valores de referência dos exames podem variar com a região, altitude e clima. Sempre compare com os valores do laboratório local, se possível.',
-                'terms-title': 'Aviso Legal e Termos de Uso',
-                'privacy-title': 'Política de Privacidade',
-                // Parâmetros de Exames
-                "hemoglobina": { "label": "Hemoglobina (g/dL)", "explanation": "É uma proteína do sangue que carrega oxigênio. Se estiver baixa, pode indicar anemia (fraqueza, cansaço)." },
-                "plaquetas": { "label": "Plaquetas (/mm³)", "explanation": "São células que ajudam o sangue a coagular. Baixas aumentam risco de sangramento." },
-                "leucocitos": { "label": "Leucócitos (/mm³)", "explanation": "Glóbulos brancos que defendem o corpo contra infecções." },
-                "glicose": { "label": "Glicemia (mg/dL)", "explanation": "Mede o açúcar no sangue. Alto pode ser diabetes, baixo pode causar desmaio." },
-                "creatinina": { "label": "Creatinina (mg/dL)", "explanation": "Avalia a função dos rins." },
-                "hematocrito": { "label": "Hematócrito (%)", "explanation": "Mostra a porcentagem de sangue formada por glóbulos vermelhos." },
-                "vcm": { "label": "VCM (fL)", "explanation": "Mostra o tamanho médio das células vermelhas. Ajuda a descobrir o tipo de anemia." },
-                "hcm": { "label": "HCM (pg)", "explanation": "Mostra quanto de hemoglobina tem cada glóbulo vermelho." },
-                "neutrofilos": { "label": "Neutrófilos (%)", "explanation": "Tipo de leucócito que aumenta em infecções bacterianas." },
-                "linfocitos": { "label": "Linfócitos (%)", "explanation": "Outro tipo de glóbulo branco, aumenta em infecções virais." },
-                "monocitos": { "label": "Monócitos (%)", "explanation": "Defendem o corpo, aumentam em infecções e inflamações prolongadas." },
-                "eosinofilos": { "label": "Eosinófilos (%)", "explanation": "Aumentam em alergias e parasitoses (vermes)." },
-                "bastonetes": { "label": "Bastonetes (%)", "explanation": "Forma jovem dos neutrófilos, aumentam em infecções graves." },
-                "ast_tgo": { "label": "AST/TGO (U/L)", "explanation": "Enzima do fígado. Alta pode indicar problemas no fígado, como hepatite." },
-                "alt_tgp": { "label": "ALT/TGP (U/L)", "explanation": "Enzima do fígado, mais específica que a TGO. Alta pode indicar problemas no fígado." },
-                "malaria_g_espessa": { "label": "Malária (Gota Espessa)", "explanation": "Pesquisa de parasitas no sangue para saber se a pessoa está com malária." },
-                "malaria_t_rapido": { "label": "Malária (Teste Rápido)", "explanation": "Detecta antígenos do parasita no sangue, resultado em poucos minutos." },
-                "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detecta infecção recente, antes do corpo produzir anticorpos." },
-                "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Mostra contato recente (IgM) ou antigo (IgG) com o vírus." },
-                "hiv_t_rapido": { "label": "HIV (Teste Rápido)", "explanation": "Detecta anticorpos contra o HIV. Positivo precisa de confirmação." },
-                "sifilis_t_rapido": { "label": "Sífilis (Teste Rápido/VDRL)", "explanation": "Mostra se a pessoa tem ou já teve sífilis." },
-                "hepatite_b_hbsag": { "label": "Hepatite B (HBsAg)", "explanation": "Mostra infecção ativa pelo vírus da Hepatite B." },
-                "hepatite_c_anti_hcv": { "label": "Hepatite C (Anti-HCV)", "explanation": "Mostra contato com o vírus da Hepatite C." },
-                "tb_baciloscopia": { "label": "Tuberculose (Baciloscopia)", "explanation": "Procura o bacilo da tuberculose em secreção do pulmão." },
-                "chagas_sorologia": { "label": "Chagas (Sorologia)", "explanation": "Mostra se a pessoa está ou já esteve infectada pelo Trypanosoma cruzi." },
-                "esquistossomose_ovos": { "label": "Esquistossomose (Ovos)", "explanation": "Identifica ovos do parasita responsável pela esquistossomose nas fezes/urina." },
-                "helmintiases_fezes": { "label": "Helmintíases (Fezes)", "explanation": "Pesquisa de ovos e parasitas de vermes intestinais." },
-            },
-            'es': {
-                'title': 'MISSIONLAB',
-                'header-title': 'MISSIONLAB ⚕️',
-                'header-subtitle': 'Herramienta de apoyo para triaje y análisis de exámenes en campo.',
-                'progress-title': 'Progreso',
-                'progress-step-1': 'Paso 1 de 4: Datos del Paciente',
-                'progress-step-2': 'Paso 2 de 4: Exámenes',
-                'progress-step-3': 'Paso 3 de 4: Signos y Síntomas',
-                'progress-step-4': 'Paso 4 de 4: Revisión y Análisis',
-                'step1-title': 'Datos del Paciente',
-                'patient-name-label': 'Nombre del Paciente',
-                'patient-age-label': 'Edad (en años)',
-                'is-pediatric-label': 'Marque si es un paciente pediátrico (niño/a)',
-                'consent-title': 'Término de Consentimiento',
-                'consent-text': 'Declaro que la información ingresada es para apoyo al triaje y no reemplaza una consulta médica. Los datos se almacenarán de forma segura solo en su dispositivo.',
-                'consent-agree': 'Leí y estoy de acuerdo',
-                'step2-title': 'Resultados de los Exámenes',
-                'mode-select-label': 'Seleccione el modo de ingreso:',
-                'fast-mode-btn': 'Triaje Rápido',
-                'full-mode-btn': 'Modo Completo',
-                'step3-title': 'Signos, Síntomas e Historia',
-                'clinical-history-label': 'Describa lo que el paciente está sintiendo',
-                'clinical-history-placeholder': 'Ej: Fiebre hace 3 días, dolor de cabeza, sin apetito...',
-                'step4-title': 'Revisión y Análisis',
-                'review-text': 'Por favor, revise los datos ingresados antes de enviar para análisis.',
-                'analyze-btn': 'ANALIZAR',
-                'prev-btn': 'Volver',
-                'next-btn': 'Siguiente',
-                'loading-text': 'Analizando datos... Por favor, espere.',
-                'footer-copyright': '&copy; 2024 MISSIONLAB.',
-                'terms-link': 'Términos de Uso',
-                'privacy-link': 'Política de Privacidad',
-                'install-btn': 'Instalar App',
-                'speak-patient-name': 'Ingrese el nombre completo del paciente.',
-                'speak-patient-age': 'Ingrese la edad del paciente en años.',
-                'speak-clinical-history': 'Describa aquí lo que el paciente siente, desde cuándo y otra información importante.',
-                'report-pdf-btn': 'Generar PDF',
-                'report-back-btn': 'Volver a Editar',
-                'report-new-btn': 'Nueva Consulta (Inicio)',
-                'help-title': 'Cómo Usar la Herramienta',
-                'help-step1': '<strong>Paso 1:</strong> Complete los datos del paciente.',
-                'help-step2': '<strong>Paso 2:</strong> Elija el modo de ingreso e ingrese los resultados.',
-                'help-step3': '<strong>Paso 3:</strong> Describa los síntomas del paciente.',
-                'help-step4': '<strong>Paso 4:</strong> Revise todo y haga clic en "ANALIZAR".',
-                'help-alert-title': 'Alerta Importante',
-                'help-alert-text': 'Los valores de referencia de los exámenes pueden variar según la región, altitud y clima. Siempre compare con los valores del laboratorio local, si es posible.',
-                'terms-title': 'Aviso Legal y Términos de Uso',
-                'privacy-title': 'Política de Privacidad',
-                // Parâmetros de Exames
-                "hemoglobina": { "label": "Hemoglobina (g/dL)", "explanation": "Es una proteína en la sangre que transporta oxígeno. Si está baja, puede indicar anemia (debilidad, cansancio)." },
-                "plaquetas": { "label": "Plaquetas (/mm³)", "explanation": "Son células que ayudan a la sangre a coagular. Bajas aumentan el riesgo de sangrado." },
-                "leucocitos": { "label": "Leucocitos (/mm³)", "explanation": "Glóbulos blancos que defienden el cuerpo contra infecciones." },
-                "glicose": { "label": "Glucemia (mg/dL)", "explanation": "Mide el azúcar en la sangre. Alto puede ser diabetes, bajo puede causar desmayos." },
-                "creatinina": { "label": "Creatinina (mg/dL)", "explanation": "Evalúa la función de los riñones." },
-                "hematocrito": { "label": "Hematocrito (%)", "explanation": "Muestra el porcentaje de sangre composto por glóbulos rojos." },
-                "vcm": { "label": "VCM (fL)", "explanation": "Muestra el tamaño promedio de los glóbulos rojos. Ayuda a descubrir el tipo de anemia." },
-                "hcm": { "label": "HCM (pg)", "explanation": "Muestra cuánta hemoglobina hay en cada glóbulo rojo." },
-                "neutrofilos": { "label": "Neutrófilos (%)", "explanation": "Tipo de leucocito que aumenta en infecciones bacterianas." },
-                "linfocitos": { "label": "Linfocitos (%)", "explanation": "Otro tipo de glóbulo blanco, aumenta en infecciones virales." },
-                "monocitos": { "label": "Monocitos (%)", "explanation": "Defienden el cuerpo, aumentan en infecciones e inflamaciones prolongadas." },
-                "eosinofilos": { "label": "Eosinófilos (%)", "explanation": "Aumentan en alergias y parasitosis (gusanos)." },
-                "bastonetes": { "label": "Cayados/Bandas (%)", "explanation": "Forma joven de los neutrófilos, aumentan en infecciones graves." },
-                "ast_tgo": { "label": "AST/TGO (U/L)", "explanation": "Enzima del hígado. Alta puede indicar problemas en el hígado, como hepatitis." },
-                "alt_tgp": { "label": "ALT/TGP (U/L)", "explanation": "Enzima del hígado, más específica que la TGO. Alta puede indicar problemas en el hígado." },
-                "malaria_g_espessa": { "label": "Malaria (Gota Gruesa)", "explanation": "Búsqueda de parásitos en la sangre para saber si la persona tiene malaria." },
-                "malaria_t_rapido": { "label": "Malaria (Test Rápido)", "explanation": "Detecta antígenos del parásito en la sangre, resultado en pocos minutos." },
-                "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detecta infección reciente, antes de que el cuerpo produzca anticuerpos." },
-                "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Muestra contacto reciente (IgM) o antiguo (IgG) con el virus." },
-                "hiv_t_rapido": { "label": "VIH (Test Rápido)", "explanation": "Detecta anticuerpos contra el VIH. Positivo necesita confirmación." },
-                "sifilis_t_rapido": { "label": "Sífilis (Test Rápido/VDRL)", "explanation": "Muestra si la persona tiene o ha tenido sífilis." },
-                "hepatite_b_hbsag": { "label": "Hepatitis B (HBsAg)", "explanation": "Muestra infección activa por el virus de la Hepatitis B." },
-                "hepatite_c_anti_hcv": { "label": "Hepatitis C (Anti-HCV)", "explanation": "Muestra contacto con el virus de la Hepatitis C." },
-                "tb_baciloscopia": { "label": "Tuberculosis (Baciloscopía)", "explanation": "Busca el bacilo de la tuberculosis en la secreción del pulmón." },
-                "chagas_sorologia": { "label": "Chagas (Serología)", "explanation": "Muestra si la persona está o ha estado infectada por Trypanosoma cruzi." },
-                "esquistossomose_ovos": { "label": "Esquistosomiasis (Huevos)", "explanation": "Identifica huevos del parásito responsable de la esquistosomiasis en heces/orina." },
-                "helmintiases_fezes": { "label": "Helmintiasis (Heces)", "explanation": "Búsqueda de huevos y parásitos de gusanos intestinales." },
-            },
-            'en': {
-                'title': 'MISSIONLAB',
-                'header-title': 'MISSIONLAB ⚕️',
-                'header-subtitle': 'Support tool for triage and lab analysis in the field.',
-                'progress-title': 'Progress',
-                'progress-step-1': 'Step 1 of 4: Patient Data',
-                'progress-step-2': 'Step 2 of 4: Lab Results',
-                'progress-step-3': 'Step 3 of 4: Signs & Symptoms',
-                'progress-step-4': 'Step 4 of 4: Review & Analyze',
-                'step1-title': 'Patient Data',
-                'patient-name-label': 'Patient Name',
-                'patient-age-label': 'Age (in years)',
-                'is-pediatric-label': 'Check if the patient is a child',
-                'consent-title': 'Consent Form',
-                'consent-text': 'I declare that the information provided is for triage support and does not replace a medical consultation. The data will be stored securely only on your device.',
-                'consent-agree': 'I have read and agree',
-                'step2-title': 'Lab Results',
-                'mode-select-label': 'Select entry mode:',
-                'fast-mode-btn': 'Quick Triage',
-                'full-mode-btn': 'Full Mode',
-                'step3-title': 'Signs, Symptoms & History',
-                'clinical-history-label': 'Describe what the patient is feeling',
-                'clinical-history-placeholder': 'e.g., Fever for 3 days, headache, no appetite...',
-                'step4-title': 'Review & Analyze',
-                'review-text': 'Please review the entered data before submitting for analysis.',
-                'analyze-btn': 'ANALYZE',
-                'prev-btn': 'Back',
-                'next-btn': 'Next',
-                'loading-text': 'Analyzing data... Please wait.',
-                'footer-copyright': '&copy; 2024 MISSIONLAB.',
-                'terms-link': 'Terms of Use',
-                'privacy-link': 'Privacy Policy',
-                'install-btn': 'Install App',
-                'speak-patient-name': 'Enter the patient\'s full name.',
-                'speak-patient-age': 'Enter the patient\'s age in years.',
-                'speak-clinical-history': 'Describe what the patient is feeling, for how long, and other important information.',
-                'report-pdf-btn': 'Generate PDF',
-                'report-back-btn': 'Back to Edit',
-                'report-new-btn': 'New Consultation (Start)',
-                'help-title': 'How to Use This Tool',
-                'help-step1': '<strong>Step 1:</strong> Fill in the patient\'s data.',
-                'help-step2': '<strong>Step 2:</strong> Choose the entry mode and enter the results.',
-                'help-step3': '<strong>Step 3:</strong> Describe the patient\'s symptoms.',
-                'help-step4': '<strong>Step 4:</strong> Review everything and click "ANALYZE".',
-                'help-alert-title': 'Important Alert',
-                'help-alert-text': 'Reference values for lab tests can vary by region, altitude, and climate. Always compare with local lab values if possible.',
-                'terms-title': 'Disclaimer and Terms of Use',
-                'privacy-title': 'Privacy Policy',
-                // Parâmetros de Exames
-                "hemoglobina": { "label": "Hemoglobin (g/dL)", "explanation": "A protein in the blood that carries oxygen. If low, it may indicate anemia (weakness, fatigue)." },
-                "plaquetas": { "label": "Platelets (/mm³)", "explanation": "Cells that help blood clot. Low levels increase bleeding risk." },
-                "leucocitos": { "label": "Leukocytes (/mm³)", "explanation": "White blood cells that defend the body against infections." },
-                "glicose": { "label": "Glucose (mg/dL)", "explanation": "Measures blood sugar. High could be diabetes, low can cause fainting." },
-                "creatinina": { "label": "Creatinine (mg/dL)", "explanation": "Assesses kidney function." },
-                "hematocrito": { "label": "Hematocrit (%)", "explanation": "Shows the percentage of blood composed of red blood cells." },
-                "vcm": { "label": "MCV (fL)", "explanation": "Shows the average size of red blood cells. Helps determine the type of anemia." },
-                "hcm": { "label": "MCH (pg)", "explanation": "Shows how much hemoglobin is in each red blood cell." },
-                "neutrofilos": { "label": "Neutrophils (%)", "explanation": "A type of white blood cell that increases in bacterial infections." },
-                "linfocitos": { "label": "Lymphocytes (%)", "explanation": "Another type of white blood cell, increases in viral infections." },
-                "monocitos": { "label": "Monocytes (%)", "explanation": "Defend the body, increase in prolonged infections and inflammations." },
-                "eosinofilos": { "label": "Eosinophils (%)", "explanation": "Increase in allergies and parasitic infections (worms)." },
-                "bastonetes": { "label": "Bands (%)", "explanation": "Young form of neutrophils, increase in severe infections." },
-                "ast_tgo": { "label": "AST/GOT (U/L)", "explanation": "A liver enzyme. High levels can indicate liver problems like hepatitis." },
-                "alt_tgp": { "label": "ALT/GPT (U/L)", "explanation": "A liver enzyme, more specific than AST. High levels can indicate liver problems." },
-                "malaria_g_espessa": { "label": "Malaria (Thick Smear)", "explanation": "Searches for parasites in the blood to determine if the person has malaria." },
-                "malaria_t_rapido": { "label": "Malaria (Rapid Test)", "explanation": "Detects parasite antigens in the blood, with results in minutes." },
-                "dengue_ns1": { "label": "Dengue NS1", "explanation": "Detects recent infection, before the body produces antibodies." },
-                "dengue_igm_igg": { "label": "Dengue IgM/IgG", "explanation": "Shows recent (IgM) or past (IgG) contact with the virus." },
-                "hiv_t_rapido": { "label": "HIV (Rapid Test)", "explanation": "Detects antibodies against HIV. A positive result needs confirmation." },
-                "sifilis_t_rapido": { "label": "Syphilis (Rapid Test/VDRL)", "explanation": "Shows if the person has or has had syphilis." },
-                "hepatite_b_hbsag": { "label": "Hepatitis B (HBsAg)", "explanation": "Shows active infection with the Hepatitis B virus." },
-                "hepatite_c_anti_hcv": { "label": "Hepatitis C (Anti-HCV)", "explanation": "Shows contact with the Hepatitis C virus." },
-                "tb_baciloscopia": { "label": "Tuberculosis (Sputum Smear)", "explanation": "Looks for the tuberculosis bacillus in lung secretions." },
-                "chagas_sorologia": { "label": "Chagas (Serology)", "explanation": "Shows if the person is or has been infected with Trypanosoma cruzi." },
-                "esquistossomose_ovos": { "label": "Schistosomiasis (Ova)", "explanation": "Identifies eggs of the parasite responsible for schistosomiasis in stool/urine." },
-                "helmintiases_fezes": { "label": "Helminthiasis (Stool)", "explanation": "Searches for eggs and parasites of intestinal worms." },
-            },
-        };
-        
-        // --- FUNÇÕES PRINCIPAIS ---
-        
-        // Renderizar campos de exames
-        function renderLabFields(isQuickMode) {
-            const container = document.getElementById('lab-fields-container');
-            container.innerHTML = '';
-            const groups = {};
-            const lang = document.documentElement.lang || 'pt-BR';
-            
-            Object.entries(allLabFields).forEach(([key, data]) => {
-                if (!isQuickMode || data.quick) {
-                    if (!groups[data.group]) {
-                        groups[data.group] = [];
-                    }
-                    groups[data.group].push({ key, ...data });
-                }
-            });
-            
-            for (const groupName in groups) {
-                const groupContainer = document.createElement('div');
-                groupContainer.className = 'space-y-4 bg-gray-100 p-4 rounded-lg border';
-                
-                const groupTitle = document.createElement('h3');
-                groupTitle.className = 'text-lg font-semibold text-gray-700';
-                groupTitle.textContent = groupName;
-                groupContainer.appendChild(groupTitle);
-                
-                groups[groupName].forEach(field => {
-                    const fieldTranslations = translations[lang][field.key] || { 
-                        label: field.key, 
-                        explanation: "No description available." 
-                    };
-                    
-                    const fieldHTML = `
-                        <div>
-                            <label for="${field.key}" class="flex items-center text-sm font-medium">
-                                ${fieldTranslations.label}
-                                <button type="button" class="info-btn ml-2 text-gray-400 hover:text-blue-600" 
-                                    data-title="${fieldTranslations.label}" 
-                                    data-explanation="${fieldTranslations.explanation}"
-                                    aria-label="Informações sobre ${fieldTranslations.label}">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                                    </svg>
-                                </button>
-                            </label>
-                            <div class="flex items-center gap-2 mt-1">
-                                <input type="text" id="${field.key}" name="${field.key}" 
-                                    class="w-full rounded-md p-2 border-gray-300"
-                                    aria-label="Valor para ${fieldTranslations.label}">
-                                <button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" 
-                                    data-text="Digite o valor para ${fieldTranslations.label}. Se não souber, pode deixar em branco."
-                                    aria-label="Ouvir instrução">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>`;
-                    
-                    groupContainer.insertAdjacentHTML('beforeend', fieldHTML);
-                });
-                
-                container.appendChild(groupContainer);
-            }
-            
-            addSpeakButtonListeners();
-            addInfoButtonListeners();
-        }
-        
-        // Adicionar listeners para botões de fala
-        function addSpeakButtonListeners() {
-            document.querySelectorAll('.speak-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const textToSpeak = btn.dataset.text;
-                    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                    utterance.lang = document.documentElement.lang || 'pt-BR';
-                    speechSynthesis.speak(utterance);
-                });
-            });
-        }
-        
-        // Adicionar listeners para botões de informação
-        function addInfoButtonListeners() {
-            document.querySelectorAll('.info-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const title = btn.dataset.title;
-                    const explanation = btn.dataset.explanation;
-                    UIModule.showModal(`
-                        <h2 class="text-xl font-bold mb-2">${title}</h2>
-                        <p>${explanation}</p>
-                    `, title);
-                });
-            });
-        }
-        
-        // Resetar aplicativo
-        function resetApp() {
-            form.reset();
-            document.getElementById('report-output').classList.add('hidden');
-            document.getElementById('progress-container').classList.remove('hidden');
-            document.getElementById('nav-buttons').classList.remove('hidden');
-            document.getElementById('lab-form').classList.remove('hidden');
-            currentStep = 1;
-            UIModule.showStep(currentStep);
-            document.getElementById('fast-mode-btn').click();
-        }
-        
-        // --- EVENT LISTENERS ---
-        
-        // Navegação do wizard
-        nextBtn.addEventListener('click', () => {
-            if (ValidationModule.validateStep(currentStep)) {
-                if (currentStep < totalSteps) {
-                    currentStep++;
-                    UIModule.showStep(currentStep);
-                }
-            }
-        });
-        
-        prevBtn.addEventListener('click', () => {
-            if (currentStep > 1) {
-                currentStep--;
-                UIModule.showStep(currentStep);
-            }
-        });
-        
-        // Modo de preenchimento de exames
-        document.getElementById('fast-mode-btn').addEventListener('click', (e) => {
-            renderLabFields(true);
-            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
-            document.getElementById('full-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
-        });
-        
-        document.getElementById('full-mode-btn').addEventListener('click', (e) => {
-            renderLabFields(false);
-            e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800');
-            document.getElementById('fast-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800');
-        });
-        
-        // Modal
+        function renderLabFields(isQuickMode) { const container = document.getElementById('lab-fields-container'); container.innerHTML = ''; const groups = {}; const lang = document.documentElement.lang || 'pt-BR'; Object.entries(allLabFields).forEach(([key, data]) => { if (!isQuickMode || data.quick) { if (!groups[data.group]) { groups[data.group] = []; } groups[data.group].push({ key, ...data }); } }); for (const groupName in groups) { const groupContainer = document.createElement('div'); groupContainer.className = 'space-y-4 bg-gray-100 p-4 rounded-lg border'; const groupTitle = document.createElement('h3'); groupTitle.className = 'text-lg font-semibold text-gray-700'; groupTitle.textContent = groupName; groupContainer.appendChild(groupTitle); groups[groupName].forEach(field => { const fieldTranslations = translations[lang][field.key] || { label: field.key, explanation: "No description available." }; const fieldHTML = `<div><label for="${field.key}" class="flex items-center text-sm font-medium">${fieldTranslations.label}<button type="button" class="info-btn ml-2 text-gray-400 hover:text-blue-600" data-title="${fieldTranslations.label}" data-explanation="${fieldTranslations.explanation}" aria-label="Informações sobre ${fieldTranslations.label}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg></button></label><div class="flex items-center gap-2 mt-1"><input type="text" id="${field.key}" name="${field.key}" class="w-full rounded-md p-2 border-gray-300" aria-label="Valor para ${fieldTranslations.label}"><button type="button" class="speak-btn p-2 text-gray-500 hover:text-blue-600" data-text="Digite o valor para ${fieldTranslations.label}. Se não souber, pode deixar em branco." aria-label="Ouvir instrução"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg></button></div></div>`; groupContainer.insertAdjacentHTML('beforeend', fieldHTML); }); container.appendChild(groupContainer); } addSpeakButtonListeners(); addInfoButtonListeners(); }
+        function addSpeakButtonListeners() { document.querySelectorAll('.speak-btn').forEach(btn => { btn.addEventListener('click', () => { const textToSpeak = btn.dataset.text; const utterance = new SpeechSynthesisUtterance(textToSpeak); utterance.lang = document.documentElement.lang || 'pt-BR'; speechSynthesis.speak(utterance); }); }); }
+        function addInfoButtonListeners() { document.querySelectorAll('.info-btn').forEach(btn => { btn.addEventListener('click', () => { const title = btn.dataset.title; const explanation = btn.dataset.explanation; UIModule.showModal(`<h2 class="text-xl font-bold mb-2">${title}</h2><p>${explanation}</p>`, title); }); }); }
+        function resetApp() { form.reset(); document.getElementById('report-output').classList.add('hidden'); document.getElementById('progress-container').classList.remove('hidden'); document.getElementById('nav-buttons').classList.remove('hidden'); document.getElementById('lab-form').classList.remove('hidden'); currentStep = 1; UIModule.showStep(currentStep); document.getElementById('fast-mode-btn').click(); }
+        async function proceedWithAnalysis() { document.getElementById('lab-form').classList.add('hidden'); document.getElementById('loading-section').classList.remove('hidden'); document.getElementById('report-output').classList.add('hidden'); document.getElementById('error-message').classList.add('hidden'); const formData = new FormData(form); const labData = {}; formData.forEach((value, key) => { if (value.trim() || (form.elements[key].type === 'checkbox' && form.elements[key].checked)) { labData[key] = form.elements[key].type === 'checkbox' ? form.elements[key].checked : value; } }); const isPediatric = document.getElementById('is-pediatric').checked; const patientType = isPediatric ? `criança de ${labData['patient-age']} anos` : `adulto de ${labData['patient-age']} anos`; const examResults = Object.entries(allLabFields).map(([key, data]) => labData[key] ? `  - ${translations['pt-BR'][key].label}: ${labData[key]}` : '').filter(Boolean).join('\n'); const holisticInfo = `- Nível de Estresse: ${labData['stress-level'] || 'Não informado'}\n- Estado Emocional: ${labData['emotional-state'] || 'Não informado'}\n- Pedido de Oração: ${labData['prayer-request'] ? 'Sim' : 'Não'}`; const promptText = `**PERSONA:** Você é um médico sênior, experiente em missões e telemedicina. Sua missão é orientar um missionário em campo, que tem conhecimento básico de saúde, mas não é médico. Use uma linguagem **empática, clara e direta**, como um mentor. Evite jargão médico complexo, mas explique os conceitos clínicos de forma simples.\n**TAREFA:** Analise os dados do paciente abaixo e gere um relatório de triagem em HTML. O objetivo é fornecer uma orientação prática, segura e integral (física, emocional e espiritual) para o missionário.\n**DADOS DO PACIENTE:**\n- Tipo: ${patientType}\n- Nome: ${labData['patient-name']}\n- Idade: ${labData['patient-age']} anos\n- Exames:\n${examResults.length > 0 ? examResults : 'Nenhum exame informado.'}\n- História Clínica: ${labData['outros_dados']}\n- Bem-Estar Emocional e Espiritual:\n${holisticInfo}\n**FORMATO DA RESPOSTA (HTML OBRIGATÓRIO):**\nSua resposta DEVE ser um único bloco de HTML, usando as classes do Tailwind CSS.\n1.  **Título Principal (h2):** Um resumo claro e direto da situação.\n2.  **Pontos de Atenção (Card Amarelo):** Destaque os resultados de exames mais preocupantes. Para cada ponto, explique o **significado clínico** em termos simples.\n3.  **Hipóteses Diagnósticas (Card Azul):** Liste as possíveis causas para os achados, da mais provável para a menos provável.\n4.  **Recomendação Prática (Card Verde):** Dê os próximos passos claros e acionáveis. Separe em "O que fazer AGORA" e "O que observar".\n5.  **Cuidado Integral (Card Roxo):** Se houver informações emocionais/espirituais, adicione esta seção. Ofereça uma palavra de conforto, encorajamento ou uma breve oração, respeitando o pedido do usuário.\n**AVISO FINAL:** Inclua um aviso legal no final, em um parágrafo \`<p class="text-xs text-gray-500 mt-6">\`.\n* Texto do aviso: "LEMBRETE: Esta é uma análise de triagem baseada em IA e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo."`; let reportHtml = ''; try { reportHtml = await ApiModule.generateContent(promptText); } catch (error) { console.warn("Análise online falhou. Usando fallback para modo offline.", error); reportHtml = OfflineModule.generateEnhancedOfflineReport(labData); } finally { document.getElementById('loading-section').classList.add('hidden'); const reportOutput = document.getElementById('report-output'); const lang = document.documentElement.lang || 'pt-BR'; const t = translations[lang]; reportOutput.innerHTML = `<div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div><div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4"><button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>${t['report-pdf-btn']}</button><button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button><button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button></div>`; document.getElementById('generate-pdf-btn').addEventListener('click', () => { PDFModule.generatePdf(reportHtml, labData['patient-name']); }); document.getElementById('back-to-edit-btn').addEventListener('click', () => { reportOutput.classList.add('hidden'); document.getElementById('lab-form').classList.remove('hidden'); UIModule.showStep(4); }); document.getElementById('new-consultation-btn').addEventListener('click', resetApp); reportOutput.classList.remove('hidden'); reportOutput.scrollIntoView({ behavior: 'smooth' }); } }
+
+        // ===================================================================================
+        // EVENT LISTENERS E INICIALIZAÇÃO
+        // ===================================================================================
+
+        nextBtn.addEventListener('click', () => { if (ValidationModule.validateStep(currentStep)) { if (currentStep < totalSteps) { currentStep++; UIModule.showStep(currentStep); } } });
+        prevBtn.addEventListener('click', () => { if (currentStep > 1) { currentStep--; UIModule.showStep(currentStep); } });
+        document.getElementById('fast-mode-btn').addEventListener('click', (e) => { renderLabFields(true); e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800'); document.getElementById('full-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800'); });
+        document.getElementById('full-mode-btn').addEventListener('click', (e) => { renderLabFields(false); e.target.classList.add('border-blue-600', 'bg-blue-100', 'text-blue-800'); document.getElementById('fast-mode-btn').classList.remove('border-blue-600', 'bg-blue-100', 'text-blue-800'); });
         closeModalBtn.addEventListener('click', () => UIModule.hideModal());
-        document.getElementById('modal').addEventListener('click', (e) => { 
-            if(e.target === e.currentTarget) UIModule.hideModal(); 
-        });
-        
-        // Ajuda
-        document.getElementById('help-btn').addEventListener('click', () => {
-            const lang = document.documentElement.lang || 'pt-BR';
-            const t = translations[lang];
-            UIModule.showModal(`
-                <h2 class="text-2xl font-bold mb-4">${t['help-title']}</h2>
-                <p class="mb-2">${t['help-step1']}</p>
-                <p class="mb-2">${t['help-step2']}</p>
-                <p class="mb-2">${t['help-step3']}</p>
-                <p class="mb-4">${t['help-step4']}</p>
-                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                    <h3 class="font-bold text-yellow-800">${t['help-alert-title']}</h3>
-                    <p class="text-sm">${t['help-alert-text']}</p>
-                </div>
-                <div class="mt-4">
-                    <h3 class="font-bold mb-2">Atalhos de Teclado:</h3>
-                    <ul class="list-disc pl-5">
-                        <li><strong>Alt + N:</strong> Próximo passo</li>
-                        <li><strong>Alt + P:</strong> Passo anterior</li>
-                        <li><strong>Alt + H:</strong> Ajuda</li>
-                    </ul>
-                </div>
-            `, t['help-title']);
-        });
-        
-        // Termos e privacidade
-        document.getElementById('terms-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            const lang = document.documentElement.lang || 'pt-BR';
-            const t = translations[lang];
-            UIModule.showModal(`
-                <h2 class="font-bold text-lg text-yellow-700 mb-2">${t['terms-title']}</h2>
-                <p class="text-sm text-gray-700 mb-2"><strong>Esta ferramenta não substitui uma consulta médica presencial.</strong> Os resultados destinam-se ao apoio em triagem.</p>
-                <ul class="list-disc pl-5 text-sm text-gray-700">
-                    <li>As informações inseridas são de responsabilidade do usuário.</li>
-                    <li>Utilize a ferramenta em local privado e seguro.</li>
-                    <li>Os dados nunca serão compartilhados com terceiros.</li>
-                    <li>Em urgências, procure atendimento presencial.</li>
-                </ul>
-            `, t['terms-title']);
-        });
-        
-        document.getElementById('privacy-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            const lang = document.documentElement.lang || 'pt-BR';
-            const t = translations[lang];
-            UIModule.showModal(`
-                <h2 class="font-bold text-blue-800 mb-2">${t['privacy-title']}</h2>
-                <p class="text-sm">Os dados informados são usados apenas para a análise clínica e geração de relatórios. As informações são armazenadas localmente no seu dispositivo e não são transmitidas para servidores externos.</p>
-                <p class="text-sm mt-2">Para maior segurança, os dados sensíveis são criptografados antes de serem armazenados.</p>
-            `, t['privacy-title']);
-        });
-        
-        // Envio do formulário
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Validação de Ranges
-            const validationWarnings = ValidationModule.validateFieldRanges();
-            if (validationWarnings.length > 0) {
-                 const message = "Atenção! Os seguintes valores parecem estar fora de uma faixa esperada:\n\n" + 
-                                 validationWarnings.join("\n") + 
-                                 "\n\nDeseja continuar com a análise mesmo assim?";
-                
-                // Usando o modal customizado em vez de confirm()
-                UIModule.showModal(`
-                    <h2 class="text-xl font-bold mb-4 text-yellow-700">Atenção</h2>
-                    <p class="mb-4">Os seguintes valores parecem estar fora de uma faixa esperada:</p>
-                    <ul class="list-disc pl-5 mb-6 text-sm">
-                        ${validationWarnings.map(w => `<li>${w.substring(2)}</li>`).join('')}
-                    </ul>
-                    <p class="font-semibold">Deseja continuar com a análise mesmo assim?</p>
-                    <div class="mt-6 flex justify-end gap-4">
-                        <button id="modal-cancel-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg py-2 px-6">Cancelar</button>
-                        <button id="modal-confirm-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-2 px-6">Continuar</button>
-                    </div>
-                `, "Valores Fora da Faixa");
-
-                document.getElementById('modal-confirm-btn').onclick = () => {
-                    UIModule.hideModal();
-                    proceedWithAnalysis();
-                };
-                document.getElementById('modal-cancel-btn').onclick = () => {
-                    UIModule.hideModal();
-                };
-                return; // Impede a continuação imediata
-            }
-            
-            proceedWithAnalysis();
-        });
-
-        async function proceedWithAnalysis() {
-            document.getElementById('lab-form').classList.add('hidden');
-            document.getElementById('loading-section').classList.remove('hidden');
-            document.getElementById('report-output').classList.add('hidden');
-            document.getElementById('error-message').classList.add('hidden');
-            
-            const formData = new FormData(form);
-            const labData = {};
-            
-            formData.forEach((value, key) => {
-                if (value.trim()) {
-                    labData[key] = value;
-                }
-            });
-            
-            const isPediatric = document.getElementById('is-pediatric').checked;
-            const patientType = isPediatric ? `criança de ${labData['patient-age']} anos` : `adulto de ${labData['patient-age']} anos`;
-            
-            const promptText = `
-                **PERSONA:** Você é um médico sênior, experiente em missões e telemedicina. Sua missão é orientar um missionário em campo, que tem conhecimento básico de saúde, mas não é médico. Use uma linguagem **empática, clara e direta**, como um mentor. Evite jargão médico complexo, mas explique os conceitos clínicos de forma simples.
-                **TAREFA:** Analise os dados do paciente abaixo e gere um relatório de triagem em HTML. O objetivo é fornecer uma orientação prática e segura para o missionário.
-                **DADOS DO PACIENTE:**
-                - Tipo: ${patientType}
-                - Nome: ${labData['patient-name']}
-                - Idade: ${labData['patient-age']} anos
-                - Exames:
-                ${Object.entries(allLabFields).map(([key, data]) => labData[key] ? `  - ${translations['pt-BR'][key].label}: ${labData[key]}` : '').filter(Boolean).join('\n')}
-                - História Clínica: ${labData['outros_dados']}
-                **FORMATO DA RESPOSTA (HTML OBRIGATÓRIO):**
-                Sua resposta DEVE ser um único bloco de HTML, usando as classes do Tailwind CSS abaixo para formatação.
-                1.  **Título Principal (h2):** Um resumo claro e direto da situação.
-                    * Exemplo: \`<h2 class="text-2xl font-bold text-gray-800 mb-4">Análise Preliminar: Sinais de Anemia e Possível Infecção</h2>\`
-                2.  **Pontos de Atenção (Card Amarelo):** Destaque os resultados de exames mais preocupantes. Para cada ponto, explique o **significado clínico** em termos simples.
-                    * Use a estrutura: \`<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">\`
-                    * Dentro, use uma lista: \`<ul>\`
-                    * Cada item da lista (li) deve ter o nome do exame em negrito, seguido da explicação.
-                    * Exemplo: \`<li><strong>Hemoglobina Baixa:</strong> Isso indica anemia, ou seja, pode estar faltando oxigênio no sangue, o que causa cansaço e palidez.</li>\`
-                3.  **Hipóteses Diagnósticas (Card Azul):** Liste as possíveis causas para os achados, da mais provável para a menos provável.
-                    * Use a estrutura: \`<div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-md mb-6">\`
-                    * Dentro, use uma lista numerada: \`<ol>\`
-                    * Exemplo: \`<li><strong>Infecção Bacteriana:</strong> Sugerida pelo aumento dos leucócitos e neutrófilos.</li>\`
-                4.  **Recomendação Prática (Card Verde):** Dê os próximos passos claros e acionáveis para o missionário em campo. Separe em "O que fazer AGORA" e "O que observar".
-                    * Use a estrutura: \`<div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md">\`
-                    * Use subtítulos (h4) para "O que fazer AGORA:" e "O que observar nas próximas horas/dias:".
-                    * Exemplo: \`<h4 class="font-bold text-gray-700">O que fazer AGORA:</h4><ul><li>- Iniciar hidratação oral vigorosa.</li></ul>\`
-                5.  **Cuidados Pediátricos (Opcional - Card Roxo):** Se o paciente for pediátrico, adicione esta seção.
-                    * Use a estrutura: \`<div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-md mt-6">\`
-                    * Dê orientações específicas para crianças.
-                **AVISO FINAL:** Inclua um aviso legal no final, em um parágrafo \`<p class="text-xs text-gray-500 mt-6">\`.
-                * Texto do aviso: "LEMBRETE: Esta é uma análise de triagem baseada em IA e não substitui uma avaliação médica completa. Em caso de dúvida ou piora do quadro, procure o serviço de saúde mais próximo."
-            `;
-            
-            let reportHtml = '';
-            try {
-                // Tenta a análise online primeiro
-                reportHtml = await ApiModule.generateContent(promptText);
-            } catch (error) {
-                // Se a análise online falhar (sem internet, chave inválida, etc.), usa o modo offline
-                console.warn("Análise online falhou. Usando fallback para modo offline.", error);
-                reportHtml = OfflineModule.generateEnhancedOfflineReport(labData);
-            } finally {
-                document.getElementById('loading-section').classList.add('hidden');
-                
-                const reportOutput = document.getElementById('report-output');
-                const lang = document.documentElement.lang || 'pt-BR';
-                const t = translations[lang];
-                
-                reportOutput.innerHTML = `
-                    <div id="report-content-for-pdf" class="prose max-w-none">${reportHtml}</div>
-                    <div class="mt-8 pt-6 border-t flex flex-col md:flex-row justify-center items-center gap-4">
-                        <button id="generate-pdf-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg py-3 px-6 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm5 4a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path>
-                            </svg>
-                            ${t['report-pdf-btn']}
-                        </button>
-                        <button id="back-to-edit-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg py-3 px-6">${t['report-back-btn']}</button>
-                        <button id="new-consultation-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-3 px-6">${t['report-new-btn']}</button>
-                    </div>
-                `;
-                
-                document.getElementById('generate-pdf-btn').addEventListener('click', () => {
-                    PDFModule.generatePdf(reportHtml, labData['patient-name']);
-                });
-                
-                document.getElementById('back-to-edit-btn').addEventListener('click', () => {
-                    reportOutput.classList.add('hidden');
-                    document.getElementById('lab-form').classList.remove('hidden');
-                    UIModule.showStep(4);
-                });
-                
-                document.getElementById('new-consultation-btn').addEventListener('click', resetApp);
-                
-                reportOutput.classList.remove('hidden');
-                reportOutput.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-        
-        // Instalação do PWA
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.classList.remove('hidden');
-        });
-        
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installBtn.classList.add('hidden');
-            }
-        });
-        
-        // Mudança de idioma
-        document.querySelectorAll('.lang-switcher button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                I18nModule.setLanguage(btn.dataset.lang);
-            });
-        });
-        
-        // Atalhos de teclado
-        document.addEventListener('keydown', (e) => {
-            // Alt + N para próximo passo
-            if (e.altKey && e.key === 'n') {
-                e.preventDefault();
-                if (currentStep < totalSteps && ValidationModule.validateStep(currentStep)) {
-                    currentStep++;
-                    UIModule.showStep(currentStep);
-                }
-            }
-            // Alt + P para passo anterior
-            if (e.altKey && e.key === 'p') {
-                e.preventDefault();
-                if (currentStep > 1) {
-                    currentStep--;
-                    UIModule.showStep(currentStep);
-                }
-            }
-            // Alt + H para ajuda
-            if (e.altKey && e.key === 'h') {
-                e.preventDefault();
-                document.getElementById('help-btn').click();
-            }
-        });
-        
-        // Status de conexão
+        document.getElementById('modal').addEventListener('click', (e) => { if(e.target === e.currentTarget) UIModule.hideModal(); });
+        document.getElementById('help-btn').addEventListener('click', () => { const lang = document.documentElement.lang || 'pt-BR'; const t = translations[lang]; UIModule.showModal(`<h2 class="text-2xl font-bold mb-4">${t['help-title']}</h2><p class="mb-2">${t['help-step1']}</p><p class="mb-2">${t['help-step2']}</p><p class="mb-2">${t['help-step3']}</p><p class="mb-4">${t['help-step4']}</p><div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded"><h3 class="font-bold text-yellow-800">${t['help-alert-title']}</h3><p class="text-sm">${t['help-alert-text']}</p></div><div class="mt-4"><h3 class="font-bold mb-2">Atalhos de Teclado:</h3><ul class="list-disc pl-5"><li><strong>Alt + N:</strong> Próximo passo</li><li><strong>Alt + P:</strong> Passo anterior</li><li><strong>Alt + H:</strong> Ajuda</li></ul></div>`, t['help-title']); });
+        document.getElementById('terms-link').addEventListener('click', (e) => { e.preventDefault(); const lang = document.documentElement.lang || 'pt-BR'; const t = translations[lang]; UIModule.showModal(`<h2 class="font-bold text-lg text-yellow-700 mb-2">${t['terms-title']}</h2><p class="text-sm text-gray-700 mb-2"><strong>Esta ferramenta não substitui uma consulta médica presencial.</strong> Os resultados destinam-se ao apoio em triagem.</p><ul class="list-disc pl-5 text-sm text-gray-700"><li>As informações inseridas são de responsabilidade do usuário.</li><li>Utilize a ferramenta em local privado e seguro.</li><li>Os dados nunca serão compartilhados com terceiros.</li><li>Em urgências, procure atendimento presencial.</li></ul>`, t['terms-title']); });
+        document.getElementById('privacy-link').addEventListener('click', (e) => { e.preventDefault(); const lang = document.documentElement.lang || 'pt-BR'; const t = translations[lang]; UIModule.showModal(`<h2 class="font-bold text-blue-800 mb-2">${t['privacy-title']}</h2><p class="text-sm">Os dados informados são usados apenas para a análise clínica e geração de relatórios. As informações são armazenadas localmente no seu dispositivo e não são transmitidas para servidores externos.</p><p class="text-sm mt-2">Para maior segurança, os dados sensíveis são criptografados antes de serem armazenados.</p>`, t['privacy-title']); });
+        form.addEventListener('submit', async (e) => { e.preventDefault(); const validationWarnings = ValidationModule.validateFieldRanges(); if (validationWarnings.length > 0) { UIModule.showModal(`<h2 class="text-xl font-bold mb-4 text-yellow-700">Atenção</h2><p class="mb-4">Os seguintes valores parecem estar fora de uma faixa esperada:</p><ul class="list-disc pl-5 mb-6 text-sm">${validationWarnings.map(w => `<li>${w.substring(2)}</li>`).join('')}</ul><p class="font-semibold">Deseja continuar com a análise mesmo assim?</p><div class="mt-6 flex justify-end gap-4"><button id="modal-cancel-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg py-2 px-6">Cancelar</button><button id="modal-confirm-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-2 px-6">Continuar</button></div>`, "Valores Fora da Faixa"); document.getElementById('modal-confirm-btn').onclick = () => { UIModule.hideModal(); proceedWithAnalysis(); }; document.getElementById('modal-cancel-btn').onclick = () => { UIModule.hideModal(); }; return; } proceedWithAnalysis(); });
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.classList.remove('hidden'); });
+        installBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; installBtn.classList.add('hidden'); } });
+        document.querySelectorAll('.lang-switcher button').forEach(btn => { btn.addEventListener('click', () => { I18nModule.setLanguage(btn.dataset.lang); }); });
+        document.addEventListener('keydown', (e) => { if (e.altKey && e.key === 'n') { e.preventDefault(); nextBtn.click(); } if (e.altKey && e.key === 'p') { e.preventDefault(); prevBtn.click(); } if (e.altKey && e.key === 'h') { e.preventDefault(); document.getElementById('help-btn').click(); } });
         window.addEventListener('online', () => UIModule.updateConnectionStatus());
         window.addEventListener('offline', () => UIModule.updateConnectionStatus());
         
-        // --- INICIALIZAÇÃO ---
+        // --- INICIALIZAÇÃO E REGISTRO DO SERVICE WORKER (CRUCIAL) ---
         
-        // Verificar suporte a Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // O caminho './service-worker.js' deve estar correto em relação ao index.html
                 navigator.serviceWorker.register('./service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado com sucesso. Escopo: ', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Falha no registro do ServiceWorker: ', error);
-                    });
+                    .then(registration => console.log('ServiceWorker: Registrado com sucesso. Escopo:', registration.scope))
+                    .catch(error => console.log('ServiceWorker: Falha no registro:', error));
             });
         }
         
-        // Inicializar aplicativo
         const savedLang = localStorage.getItem('preferredLanguage') || 'pt-BR';
         I18nModule.setLanguage(savedLang);
         UIModule.showStep(currentStep);
-        renderLabFields(true); // Inicia no modo rápido
-        
-        // Mostrar status de conexão inicial
+        renderLabFields(true);
         UIModule.updateConnectionStatus();
+
     </script>
 </body>
 </html>
